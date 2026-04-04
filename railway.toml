@@ -6,7 +6,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Railway injects $PORT; Caddy reads it via {$PORT:8080} in the Caddyfile.
+# Railway injects $PORT; nginx reads it via envsubst from nginx.conf.
 # Railway's own Traefik proxy sits in front and handles TLS + custom domains.
 healthcheckPath = "/"
 healthcheckTimeout = 300
