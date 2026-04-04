@@ -1,0 +1,85 @@
+/* ============================================================
+   extra.css — Braille Documentation site
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   SECTION 1: Braille font — SimBraille (CDN)
+   ------------------------------------------------------------
+   SimBraille is loaded from the CDN only for the Braille
+   Patterns Unicode block (U+2800–U+28FF).  The browser will
+   use this font automatically whenever it encounters a braille
+   character anywhere on the page — no extra class needed.
+
+   To self-host instead: download simbrl.ttf, place it in
+   docs/assets/fonts/, change the src URL below to:
+       url("../assets/fonts/simbrl.ttf") format("truetype")
+   and remove the CDN URL.
+   ------------------------------------------------------------ */
+
+@font-face {
+  font-family: "SimBraille";
+  src: url("https://cdn.ay.ms/simbrl.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+2800-U+28FF; /* Braille Patterns block only */
+}
+
+/* Apply SimBraille (with monospace fallback) to every element.
+   Thanks to unicode-range above, the font file only downloads
+   when the page actually contains braille characters. */
+body {
+  font-family: "SimBraille", var(--md-text-font, sans-serif);
+}
+
+
+/* ------------------------------------------------------------
+   SECTION 2: Braille code blocks
+   Fenced code blocks tagged as ```braille  get these styles.
+   Whitespace and alignment are preserved exactly.
+   ------------------------------------------------------------ */
+
+.language-braille {
+  font-family: "SimBraille", monospace;
+  font-size: 1.5rem;     /* larger so dots are clearly visible */
+  line-height: 2;
+  white-space: pre;      /* never wrap — alignment matters in braille */
+  letter-spacing: 0.05em;
+}
+
+
+/* ------------------------------------------------------------
+   SECTION 3: Whitespace-sensitive braille blocks (prose use)
+   Apply class  .braille-block  to a <pre> or <div> that
+   contains raw braille text outside of a fenced code block.
+   ------------------------------------------------------------ */
+
+.braille-block {
+  font-family: "SimBraille", monospace;
+  font-size: 1.4rem;
+  line-height: 2;
+  white-space: pre;
+  overflow-x: auto;
+  padding: 0.75rem 1rem;
+  background: var(--md-code-bg-color, #f5f5f5);
+  border-radius: 4px;
+}
+
+
+/* ------------------------------------------------------------
+   SECTION 4: Reference / alignment tables
+   Tables on reference pages rely on column alignment.
+   These rules prevent text wrapping inside cells.
+   ------------------------------------------------------------ */
+
+.md-typeset table.braille-table td,
+.md-typeset table.braille-table th {
+  white-space: nowrap;
+}
+
+/* Make all tables on the reference page horizontally scrollable
+   on narrow screens rather than breaking the layout. */
+.md-typeset .braille-table-wrapper {
+  overflow-x: auto;
+}

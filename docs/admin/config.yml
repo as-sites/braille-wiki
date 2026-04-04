@@ -1,0 +1,76 @@
+# Decap CMS configuration
+# Docs: https://decapcms.org/docs/configuration-options/
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# BACKEND — TODO: replace with your DecapBridge-generated values
+# ─────────────────────────────────────────────────────────────────────────────
+# When you set up DecapBridge (https://decapbridge.com), it will give you a
+# backend block to paste here. It will look roughly like:
+#
+#   backend:
+#     name: github
+#     repo: YOUR-ORG/YOUR-REPO          # e.g. as-sites/braille-mkdocs
+#     branch: main
+#     base_url: https://decapbridge.com
+#     auth_endpoint: /api/auth
+#
+# Do NOT invent or hardcode any client_id, client_secret, or token values here.
+# DecapBridge generates those for you after you create a site there.
+#
+backend:
+  name: github
+  repo: as-sites/braille-mkdocs   # TODO: confirm this is correct
+  branch: main
+  # TODO: add DecapBridge base_url and auth_endpoint once generated
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MEDIA
+# ─────────────────────────────────────────────────────────────────────────────
+media_folder: docs/assets/images    # where uploaded images are stored in the repo
+public_folder: /assets/images       # URL prefix used in published content
+
+# ─────────────────────────────────────────────────────────────────────────────
+# COLLECTIONS
+# Each collection maps to a folder (or set of files) in the docs/ tree.
+# ─────────────────────────────────────────────────────────────────────────────
+collections:
+
+  # ── Home page (single file) ────────────────────────────────────────────────
+  - name: home
+    label: Home
+    files:
+      - name: home
+        label: Home Page
+        file: docs/index.md
+        fields:
+          - { label: Body, name: body, widget: markdown }
+
+  # ── UEB section ───────────────────────────────────────────────────────────
+  - name: ueb
+    label: "UEB"
+    folder: docs/ueb
+    create: true
+    extension: md
+    fields:
+      - { label: Title,  name: title, widget: string }
+      - { label: Body,   name: body,  widget: markdown }
+
+  # ── Nemeth section ────────────────────────────────────────────────────────
+  - name: nemeth
+    label: "Nemeth"
+    folder: docs/nemeth
+    create: true
+    extension: md
+    fields:
+      - { label: Title,  name: title, widget: string }
+      - { label: Body,   name: body,  widget: markdown }
+
+  # ── Reference section ─────────────────────────────────────────────────────
+  - name: reference
+    label: "Reference"
+    folder: docs/reference
+    create: true
+    extension: md
+    fields:
+      - { label: Title,  name: title, widget: string }
+      - { label: Body,   name: body,  widget: markdown }

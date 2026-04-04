@@ -1,0 +1,29 @@
+site_name: Braille Documentation
+site_description: A reference site for Unified English Braille (UEB) and Nemeth braille notation.
+site_url: https://braille.ay.ms
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  font: false  # font disabled; self-host fonts via docs/stylesheets/extra.css when ready
+  features:
+    - navigation.instant
+    - navigation.sections
+    - search.suggest
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - UEB:
+      - Introduction: ueb/introduction.md
+  - Nemeth:
+      - Overview: nemeth/overview.md
+  - Reference:
+      - ASCII Braille Table: reference/ascii-braille-table.md
