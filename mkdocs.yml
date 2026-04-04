@@ -1,6 +1,6 @@
 site_name: Braille Documentation
 site_description: A reference site for Unified English Braille (UEB) and Nemeth braille notation.
-site_url: https://YOUR-RAILWAY-APP.up.railway.app  # TODO: replace with your Railway domain or custom domain
+site_url: https://braille.ay.ms
 
 docs_dir: docs
 site_dir: site
