@@ -1,65 +1,51 @@
-import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router";
+import { BrowserRouter, Link, Navigate, Route, Routes } from "react-router";
 
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/layout/AdminLayout";
-import { useAuth } from "./hooks/useAuth";
+import { ToastProvider } from "./components/shared/Toaster";
+import { DashboardPage } from "./pages/DashboardPage";
+import { DocumentBrowserPage } from "./pages/DocumentBrowserPage";
 import { DocumentEditPage } from "./pages/DocumentEditPage";
+import { DocumentHistoryPage } from "./pages/DocumentHistoryPage";
+import { DocumentNewPage } from "./pages/DocumentNewPage";
+import { DocumentPreviewPage } from "./pages/DocumentPreviewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MediaPage } from "./pages/MediaPage";
-
-function StubPage({ title }: { title: string }) {
-  return <h1>{title}</h1>;
-}
-
-function ProtectedRoutes() {
-  const location = useLocation();
-  const { loading, user } = useAuth();
-
-  if (loading) {
-    return <p>Checking session...</p>;
-  }
-
-  if (!user && location.pathname !== "/login") {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (user && location.pathname === "/login") {
-    return <Navigate to="/" replace />;
-  }
-
-  return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-
-      <Route element={<AdminLayout />}>
-        <Route path="/" element={<StubPage title="Dashboard" />} />
-        <Route path="/documents" element={<StubPage title="Document Browser" />} />
-        <Route path="/documents/new" element={<StubPage title="Create Document" />} />
-        <Route path="/documents/:id/edit" element={<DocumentEditPage />} />
-        <Route path="/documents/:id/preview" element={<StubPage title="Document Preview" />} />
-        <Route path="/documents/:id/history" element={<StubPage title="Revision History" />} />
-        <Route path="/media" element={<MediaPage />} />
-        <Route path="/settings" element={<StubPage title="Settings" />} />
-      </Route>
-
-      <Route
-        path="*"
-        element={
-          <main>
-            <h1>Not Found</h1>
-            <p>
-              <Link to="/">Go to dashboard</Link>
-            </p>
-          </main>
-        }
-      />
-    </Routes>
-  );
-}
+import { SettingsPage } from "./pages/SettingsPage";
 
 export function App() {
   return (
-    <BrowserRouter>
-      <ProtectedRoutes />
-    </BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/documents" element={<DocumentBrowserPage />} />
+              <Route path="/documents/new" element={<DocumentNewPage />} />
+              <Route path="/documents/:id/edit" element={<DocumentEditPage />} />
+              <Route path="/documents/:id/preview" element={<DocumentPreviewPage />} />
+              <Route path="/documents/:id/history" element={<DocumentHistoryPage />} />
+              <Route path="/media" element={<MediaPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
+          </Route>
+
+          <Route
+            path="*"
+            element={
+              <main>
+                <h1>Not Found</h1>
+                <p>
+                  <Link to="/">Go to dashboard</Link>
+                </p>
+              </main>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }

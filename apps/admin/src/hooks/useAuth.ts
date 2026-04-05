@@ -15,38 +15,43 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<AuthUser | null>(null);
 
+  async function refresh(cancelled = false) {
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/get-session", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        if (!cancelled) {
+          setUser(null);
+        }
+        return;
+      }
+
+      const payload = (await response.json()) as SessionResponse;
+
+      if (!cancelled) {
+        setUser(payload.user ?? null);
+      }
+    } catch {
+      if (!cancelled) {
+        setUser(null);
+      }
+    } finally {
+      if (!cancelled) {
+        setLoading(false);
+      }
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
 
     async function checkSession() {
-      try {
-        const response = await fetch("/api/auth/get-session", {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          if (!cancelled) {
-            setUser(null);
-            setLoading(false);
-          }
-          return;
-        }
-
-        const payload = (await response.json()) as SessionResponse;
-
-        if (!cancelled) {
-          setUser(payload.user ?? null);
-        }
-      } catch {
-        if (!cancelled) {
-          setUser(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
+      await refresh(cancelled);
     }
 
     void checkSession();
@@ -69,5 +74,5 @@ export function useAuth() {
     setUser(null);
   }
 
-  return { loading, user, logout };
+  return { loading, user, logout, refresh };
 }
