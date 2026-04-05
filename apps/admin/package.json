@@ -5,7 +5,8 @@
     "build": "vite build",
     "dev": "vite",
     "generate:api": "node -e \"const fs=require('node:fs');const src='../../packages/shared/openapi.yaml';const tmp='./openapi.compat.yaml';const text=fs.readFileSync(src,'utf8').replace(/^openapi:\\s*3\\.2\\.0/m,'openapi: 3.1.0');fs.writeFileSync(tmp,text);\" && openapi-typescript openapi.compat.yaml -o src/api/generated/api.ts && node -e \"require('node:fs').unlinkSync('openapi.compat.yaml')\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx,.cts,.mts"
   },
   "dependencies": {
     "@tiptap/core": "3.22.2",

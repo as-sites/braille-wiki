@@ -5,7 +5,8 @@
     "build": "echo 'build not yet configured'",
     "dev": "tsx watch src/index.ts",
     "seed": "tsx src/seed.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx,.cts,.mts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1024.0",

@@ -15,6 +15,18 @@
         "/^pnpm --filter @braille-docs/api typecheck 2>&1 \\| head -100$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^pnpm nx show projects$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^pnpm nx run-many -t lint$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^pnpm nx run-many -t lint --outputStyle=static$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }
