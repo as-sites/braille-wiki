@@ -4,7 +4,8 @@
       "Bash(pnpm --version)",
       "Bash(mise --version)",
       "Bash(nx --version)",
-      "Bash(pnpm install:*)"
+      "Bash(pnpm install:*)",
+      "Bash(pnpm --filter @braille-docs/api typecheck)"
     ]
   }
 }
