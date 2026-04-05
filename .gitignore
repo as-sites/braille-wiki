@@ -3,9 +3,6 @@ __pycache__/
 *.py[cod]
 *.pyo
 
-# MkDocs build output
-site/
-
 # Virtual environments
 .venv/
 venv/
@@ -25,3 +22,6 @@ env/
 
 # Node (if you ever add a JS tool)
 node_modules/
+
+# MkDocs build output
+site/

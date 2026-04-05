@@ -1,41 +1,40 @@
-# Decap CMS configuration
-# Docs: https://decapcms.org/docs/configuration-options/
-#
-# ─────────────────────────────────────────────────────────────────────────────
-# BACKEND — TODO: replace with your DecapBridge-generated values
-# ─────────────────────────────────────────────────────────────────────────────
-# When you set up DecapBridge (https://decapbridge.com), it will give you a
-# backend block to paste here. It will look roughly like:
-#
-#   backend:
-#     name: github
-#     repo: YOUR-ORG/YOUR-REPO          # e.g. as-sites/braille-mkdocs
-#     branch: main
-#     base_url: https://decapbridge.com
-#     auth_endpoint: /api/auth
-#
-# Do NOT invent or hardcode any client_id, client_secret, or token values here.
-# DecapBridge generates those for you after you create a site there.
-#
+# Use DecapBridge PKCE auth (required)
 backend:
-  name: github
-  repo: as-sites/braille-mkdocs   # TODO: confirm this is correct
+  name: git-gateway
+  repo: as-sites/braille-mkdocs
   branch: main
-  # TODO: add DecapBridge base_url and auth_endpoint once generated
+  auth_type: pkce
+  base_url: https://auth.decapbridge.com
+  auth_endpoint: /sites/053d26e7-e7c8-46eb-9a02-bb6dd1e168c0/pkce
+  auth_token_endpoint: /sites/053d26e7-e7c8-46eb-9a02-bb6dd1e168c0/token
+  gateway_url: https://gateway.decapbridge.com
 
-# ─────────────────────────────────────────────────────────────────────────────
-# MEDIA
-# ─────────────────────────────────────────────────────────────────────────────
-media_folder: docs/assets/images    # where uploaded images are stored in the repo
-public_folder: /assets/images       # URL prefix used in published content
+  # See who did what (optional)
+  commit_messages:
+    create: Create {{collection}} “{{slug}}” - {{author-name}} <{{author-login}}> via DecapBridge
+    update: Update {{collection}} “{{slug}}” - {{author-name}} <{{author-login}}> via DecapBridge
+    delete: Delete {{collection}} “{{slug}}” - {{author-name}} <{{author-login}}> via DecapBridge
+    uploadMedia: Upload “{{path}}” - {{author-name}} <{{author-login}}> via DecapBridge
+    deleteMedia: Delete “{{path}}” - {{author-name}} <{{author-login}}> via DecapBridge
+    openAuthoring: Message {{message}} - {{author-name}} <{{author-login}}> via DecapBridge
 
-# ─────────────────────────────────────────────────────────────────────────────
-# COLLECTIONS
-# Each collection maps to a folder (or set of files) in the docs/ tree.
-# ─────────────────────────────────────────────────────────────────────────────
+# Enable PKCE fields (optional, recommended)
+auth:
+  email_claim: email
+  first_name_claim: first_name
+  last_name_claim: last_name
+  avatar_url_claim: avatar_url
+
+# Better Decap + Bridge logo (optional)
+logo_url: https://decapbridge.com/decapcms-with-bridge.svg
+
+# Add site links in Decap CMS (optional)
+site_url: https://braille.ay.ms
+
+media_folder: docs/assets/images
+public_folder: /assets/images
+
 collections:
-
-  # ── Home page (single file) ────────────────────────────────────────────────
   - name: home
     label: Home
     files:
@@ -45,32 +44,29 @@ collections:
         fields:
           - { label: Body, name: body, widget: markdown }
 
-  # ── UEB section ───────────────────────────────────────────────────────────
   - name: ueb
-    label: "UEB"
+    label: UEB
     folder: docs/ueb
     create: true
     extension: md
     fields:
-      - { label: Title,  name: title, widget: string }
-      - { label: Body,   name: body,  widget: markdown }
+      - { label: Title, name: title, widget: string }
+      - { label: Body, name: body, widget: markdown }
 
-  # ── Nemeth section ────────────────────────────────────────────────────────
   - name: nemeth
-    label: "Nemeth"
+    label: Nemeth
     folder: docs/nemeth
     create: true
     extension: md
     fields:
-      - { label: Title,  name: title, widget: string }
-      - { label: Body,   name: body,  widget: markdown }
+      - { label: Title, name: title, widget: string }
+      - { label: Body, name: body, widget: markdown }
 
-  # ── Reference section ─────────────────────────────────────────────────────
   - name: reference
-    label: "Reference"
+    label: Reference
     folder: docs/reference
     create: true
     extension: md
     fields:
-      - { label: Title,  name: title, widget: string }
-      - { label: Body,   name: body,  widget: markdown }
+      - { label: Title, name: title, widget: string }
+      - { label: Body, name: body, widget: markdown }
