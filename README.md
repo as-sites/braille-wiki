@@ -37,20 +37,23 @@ This repo contains:
 Requires: [Docker Desktop](https://www.docker.com/products/docker-desktop/) (no Python install needed).
 
 ```bash
-docker compose build docs
-docker compose up docs
+docker compose up dev
 ```
 
-The docs site is served at <http://localhost:8080>.
+The docs site is served with live-reload at <http://localhost:8000>. File changes in `docs/` and `mkdocs.yml` reload automatically.
 
-Because this service runs nginx, it does not live-reload source edits. Rebuild after content changes:
+To stop: `Ctrl-C`, then `docker compose down`.
+
+### Preview the production build
+
+To test the nginx production image locally:
 
 ```bash
 docker compose build docs
 docker compose up docs
 ```
 
-To stop: `Ctrl-C`, then `docker compose down`.
+Served at <http://localhost:8080> (no live-reload).
 
 ---
 
