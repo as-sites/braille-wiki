@@ -1,0 +1,1569 @@
+openapi: 3.2.0
+info:
+  title: Braille Documentation Platform API
+  version: 1.0.0
+  description: |
+    REST API for the Braille Documentation Platform. Consumed by three clients:
+    - **Admin SPA** (session auth) — document editing, publishing, media management
+    - **Public site** — search, backlinks
+    - **MCP server & external integrations** (API key auth) — programmatic read/write access
+
+    Does NOT cover better-auth's built-in `/api/auth/*` routes or the MCP protocol endpoint (`POST /mcp`).
+
+servers:
+  - url: /
+    description: Same-origin (relative)
+
+tags:
+  - name: Public
+    description: Unauthenticated endpoints
+  - name: Documents
+    description: Admin document CRUD
+  - name: Publishing
+    description: Publish, unpublish, discard draft
+  - name: Revisions
+    description: Version history and rollback
+  - name: Navigation
+    description: Move and reorder documents
+  - name: Media
+    description: Media upload and management
+  - name: Users
+    description: User management (admin role only)
+  - name: API Keys
+    description: API key generation and revocation
+  - name: Search
+    description: Full-text search
+  - name: Internal
+    description: Internal cache invalidation (not publicly exposed)
+
+security: []
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: better-auth.session_token
+      description: Cookie-based session set by better-auth. Used by the admin SPA.
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key for MCP clients and external integrations.
+
+  parameters:
+    DocumentId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Document UUID
+    RevisionId:
+      name: revisionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Revision UUID
+    MediaId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Media UUID
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: User UUID
+    ApiKeyId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: API key UUID
+    DocumentPath:
+      name: path
+      in: path
+      required: true
+      schema:
+        type: string
+      style: simple
+      description: >
+        Materialized document path with slashes (e.g. `nemeth/chapter-3/rule-7`).
+
+  schemas:
+    # ── Documents ──────────────────────────────────────────────
+
+    Document:
+      type: object
+      required: [id, path, slug, position, title, status, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        path:
+          type: string
+        slug:
+          type: string
+        position:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        metadata:
+          type: ["object", "null"]
+        status:
+          type: string
+          enum: [draft, published, archived]
+        prosemirror_json:
+          type: ["object", "null"]
+        published_prosemirror_json:
+          type: ["object", "null"]
+        rendered_html:
+          type: ["string", "null"]
+        created_by:
+          type: ["string", "null"]
+          format: uuid
+        updated_by:
+          type: ["string", "null"]
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        published_at:
+          type: ["string", "null"]
+          format: date-time
+
+    DocumentSummary:
+      type: object
+      required: [id, path, title, status, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        path:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+          enum: [draft, published, archived]
+        updated_at:
+          type: string
+          format: date-time
+        published_at:
+          type: ["string", "null"]
+          format: date-time
+
+    PublishedDocument:
+      type: object
+      required: [title, rendered_html, published_at]
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        rendered_html:
+          type: string
+        metadata:
+          type: ["object", "null"]
+        published_at:
+          type: string
+          format: date-time
+
+    DocumentTreeNode:
+      type: object
+      required: [path, title, position]
+      properties:
+        path:
+          type: string
+        title:
+          type: string
+        position:
+          type: integer
+        description:
+          type: ["string", "null"]
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentTreeNode"
+
+    DocumentChild:
+      type: object
+      required: [path, title, position]
+      properties:
+        path:
+          type: string
+        title:
+          type: string
+        position:
+          type: integer
+        description:
+          type: ["string", "null"]
+
+    DocumentBreadcrumb:
+      type: object
+      required: [path, title]
+      properties:
+        path:
+          type: string
+        title:
+          type: string
+
+    Backlink:
+      type: object
+      required: [path, title]
+      properties:
+        path:
+          type: string
+        title:
+          type: string
+
+    CreateDocumentRequest:
+      type: object
+      required: [title, parent_path, slug]
+      properties:
+        title:
+          type: string
+        parent_path:
+          type: string
+          description: >
+            Path of the parent document. Empty string for root-level works.
+        slug:
+          type: string
+          description: URL-safe final segment of the path.
+
+    UpdateDocumentRequest:
+      type: object
+      required: [prosemirror_json]
+      properties:
+        prosemirror_json:
+          type: object
+          description: ProseMirror document JSON (free-form).
+        title:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+
+    MoveDocumentRequest:
+      type: object
+      required: [new_parent_path]
+      properties:
+        new_parent_path:
+          type: string
+        new_slug:
+          type: string
+
+    ReorderRequest:
+      type: object
+      required: [parent_path, children]
+      properties:
+        parent_path:
+          type: string
+          description: Path of the parent whose children are being reordered.
+        children:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Ordered array of child document UUIDs.
+
+    # ── Revisions ──────────────────────────────────────────────
+
+    Revision:
+      type: object
+      required: [id, action, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        action:
+          type: string
+          enum: [save, publish, rollback]
+        created_by:
+          type: ["string", "null"]
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+
+    RevisionDetail:
+      allOf:
+        - $ref: "#/components/schemas/Revision"
+        - type: object
+          required: [prosemirror_json]
+          properties:
+            prosemirror_json:
+              type: object
+
+    # ── Media ──────────────────────────────────────────────────
+
+    Media:
+      type: object
+      required: [id, storage_key, filename, mime_type, size_bytes, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        storage_key:
+          type: string
+        filename:
+          type: string
+        mime_type:
+          type: string
+        size_bytes:
+          type: integer
+        width:
+          type: ["integer", "null"]
+        height:
+          type: ["integer", "null"]
+        alt_text:
+          type: ["string", "null"]
+        uploaded_by:
+          type: ["string", "null"]
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+
+    UpdateMediaRequest:
+      type: object
+      properties:
+        alt_text:
+          type: string
+        filename:
+          type: string
+
+    # ── Users ──────────────────────────────────────────────────
+
+    User:
+      type: object
+      required: [id, name, email, role, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [admin, editor]
+        created_at:
+          type: string
+          format: date-time
+
+    CreateUserRequest:
+      type: object
+      required: [name, email, role]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [admin, editor]
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, editor]
+
+    # ── API Keys ───────────────────────────────────────────────
+
+    ApiKey:
+      type: object
+      required: [id, name, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        last_used_at:
+          type: ["string", "null"]
+          format: date-time
+
+    ApiKeyCreateResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiKey"
+        - type: object
+          required: [key]
+          properties:
+            key:
+              type: string
+              description: The raw API key. Shown once — cannot be retrieved again.
+
+    CreateApiKeyRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+
+    # ── Search ─────────────────────────────────────────────────
+
+    SearchResult:
+      type: object
+      required: [path, title, snippet, score]
+      properties:
+        path:
+          type: string
+        title:
+          type: string
+        snippet:
+          type: string
+        score:
+          type: number
+
+    SearchResponse:
+      type: object
+      required: [results, total]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchResult"
+        total:
+          type: integer
+
+    # ── Internal ───────────────────────────────────────────────
+
+    CacheInvalidateRequest:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: "Cache tags to invalidate (e.g. `doc:nemeth/chapter-3`)."
+
+    # ── Common ─────────────────────────────────────────────────
+
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code.
+        message:
+          type: string
+          description: Human-readable description.
+
+paths:
+  # ════════════════════════════════════════════════════════════
+  # PUBLIC
+  # ════════════════════════════════════════════════════════════
+
+  /api/search:
+    get:
+      operationId: searchDocuments
+      summary: Full-text search across published documents
+      tags: [Search, Public]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query string.
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: work
+          in: query
+          schema:
+            type: string
+          description: Optional root path to scope search (e.g. `nemeth`).
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+  /api/documents/{path}:
+    get:
+      operationId: getPublishedDocument
+      summary: Get a single published document by path
+      tags: [Public]
+      parameters:
+        - $ref: "#/components/parameters/DocumentPath"
+      responses:
+        "200":
+          description: Published document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublishedDocument"
+        "404":
+          description: Document not found or not published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/documents/{path}/children:
+    get:
+      operationId: getDocumentChildren
+      summary: Immediate children of a document, ordered by position
+      tags: [Public]
+      parameters:
+        - $ref: "#/components/parameters/DocumentPath"
+      responses:
+        "200":
+          description: List of child documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DocumentChild"
+
+  /api/documents/{path}/tree:
+    get:
+      operationId: getDocumentTree
+      summary: Full nested hierarchy under a root path
+      tags: [Public]
+      parameters:
+        - $ref: "#/components/parameters/DocumentPath"
+      responses:
+        "200":
+          description: Tree structure for the work
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentTreeNode"
+
+  /api/documents/{path}/backlinks:
+    get:
+      operationId: getDocumentBacklinks
+      summary: Pages that link to this document
+      tags: [Public]
+      parameters:
+        - $ref: "#/components/parameters/DocumentPath"
+      responses:
+        "200":
+          description: List of linking documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Backlink"
+
+  # ════════════════════════════════════════════════════════════
+  # ADMIN — DOCUMENTS
+  # ════════════════════════════════════════════════════════════
+
+  /api/admin/documents:
+    get:
+      operationId: listDocuments
+      summary: List all documents (admin)
+      tags: [Documents]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, published, archived]
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search title substring.
+        - name: parent_path
+          in: query
+          schema:
+            type: string
+          description: Scope to a subtree.
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Paginated list of documents
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DocumentSummary"
+                  total:
+                    type: integer
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: createDocument
+      summary: Create a new document
+      tags: [Documents]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDocumentRequest"
+      responses:
+        "201":
+          description: Created document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Duplicate path
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/documents/{id}:
+    get:
+      operationId: getDocumentById
+      summary: Get a single document by UUID (any status)
+      tags: [Documents]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Full document including ProseMirror JSON
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      operationId: updateDocument
+      summary: Save draft changes to a document
+      tags: [Documents]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDocumentRequest"
+      responses:
+        "200":
+          description: Updated document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: archiveDocument
+      summary: Archive a document (soft delete)
+      tags: [Documents]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Archived document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ════════════════════════════════════════════════════════════
+  # ADMIN — PUBLISHING
+  # ════════════════════════════════════════════════════════════
+
+  /api/admin/documents/{id}/publish:
+    post:
+      operationId: publishDocument
+      summary: Publish a document
+      description: |
+        Serializes ProseMirror JSON to HTML, stores rendered output, updates status
+        to `published`, rebuilds cross-references, updates the search index, and
+        invalidates the Astro cache.
+      tags: [Publishing]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Published document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/documents/{id}/unpublish:
+    post:
+      operationId: unpublishDocument
+      summary: Unpublish a document
+      description: |
+        Sets status to `draft`, clears rendered HTML, removes from search index,
+        and invalidates the Astro cache. Content is preserved.
+      tags: [Publishing]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Unpublished document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/documents/{id}/discard:
+    post:
+      operationId: discardDraft
+      summary: Discard draft changes
+      description: |
+        Resets `prosemirror_json` to `published_prosemirror_json`. Fails if the
+        document has never been published.
+      tags: [Publishing]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Document with restored content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Document has never been published — nothing to restore
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ════════════════════════════════════════════════════════════
+  # ADMIN — REVISIONS
+  # ════════════════════════════════════════════════════════════
+
+  /api/admin/documents/{id}/revisions:
+    get:
+      operationId: listRevisions
+      summary: List revision history for a document
+      tags: [Revisions]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Paginated list of revisions, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Revision"
+                  total:
+                    type: integer
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/revisions/{revisionId}:
+    get:
+      operationId: getRevision
+      summary: Get a specific revision with its ProseMirror JSON
+      tags: [Revisions]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RevisionId"
+      responses:
+        "200":
+          description: Revision detail with content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RevisionDetail"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Revision not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/documents/{id}/rollback/{revisionId}:
+    post:
+      operationId: rollbackDocument
+      summary: Rollback a document to a previous revision
+      description: |
+        Loads the revision's ProseMirror JSON into the document as a new draft.
+        Creates a revision with `action: 'rollback'`. Does NOT auto-publish.
+      tags: [Revisions]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+        - $ref: "#/components/parameters/RevisionId"
+      responses:
+        "200":
+          description: Document with rolled-back content (as draft)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document or revision not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ════════════════════════════════════════════════════════════
+  # ADMIN — NAVIGATION
+  # ════════════════════════════════════════════════════════════
+
+  /api/admin/documents/{id}/move:
+    put:
+      operationId: moveDocument
+      summary: Move a document (and subtree) to a new parent
+      tags: [Navigation]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DocumentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveDocumentRequest"
+      responses:
+        "200":
+          description: Document with updated path
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Target path already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/documents/reorder:
+    put:
+      operationId: reorderChildren
+      summary: Reorder sibling documents under a parent
+      tags: [Navigation]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReorderRequest"
+      responses:
+        "200":
+          description: Reorder successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ════════════════════════════════════════════════════════════
+  # ADMIN — MEDIA
+  # ════════════════════════════════════════════════════════════
+
+  /api/admin/media:
+    get:
+      operationId: listMedia
+      summary: List media files
+      tags: [Media]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - name: mime_type
+          in: query
+          schema:
+            type: string
+          description: Filter by MIME type (e.g. `image/png`).
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search filename or alt text.
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Paginated list of media
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Media"
+                  total:
+                    type: integer
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: uploadMedia
+      summary: Upload a media file to R2
+      tags: [Media]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                alt_text:
+                  type: string
+      responses:
+        "201":
+          description: Created media record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Media"
+        "400":
+          description: Validation error (missing file, unsupported type)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/media/{id}:
+    put:
+      operationId: updateMedia
+      summary: Update media metadata
+      tags: [Media]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/MediaId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMediaRequest"
+      responses:
+        "200":
+          description: Updated media record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Media"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Media not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: deleteMedia
+      summary: Delete a media file
+      description: Removes from R2 and deletes the database row.
+      tags: [Media]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/MediaId"
+      responses:
+        "200":
+          description: Deletion successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Media not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ════════════════════════════════════════════════════════════
+  # ADMIN — USERS
+  # ════════════════════════════════════════════════════════════
+
+  /api/admin/users:
+    get:
+      operationId: listUsers
+      summary: List all users
+      tags: [Users]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions (admin role required)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: createUser
+      summary: Create or invite a user
+      tags: [Users]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/users/{id}:
+    put:
+      operationId: updateUser
+      summary: Update a user
+      description: Editors cannot promote/demote admins.
+      tags: [Users]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: deleteUser
+      summary: Delete a user
+      description: |
+        Admins cannot be deleted by editors. An admin cannot delete themselves.
+      tags: [Users]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "200":
+          description: Deletion successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ════════════════════════════════════════════════════════════
+  # ADMIN — API KEYS
+  # ════════════════════════════════════════════════════════════
+
+  /api/admin/api-keys:
+    get:
+      operationId: listApiKeys
+      summary: List API keys
+      description: Returns keys for the current user, or all keys if admin.
+      tags: [API Keys]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      responses:
+        "200":
+          description: List of API keys (key values are never returned)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApiKey"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: createApiKey
+      summary: Generate a new API key
+      description: The raw key is returned once and cannot be retrieved again.
+      tags: [API Keys]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApiKeyRequest"
+      responses:
+        "201":
+          description: Created API key (includes raw key value)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKeyCreateResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/api-keys/{id}:
+    delete:
+      operationId: deleteApiKey
+      summary: Revoke an API key
+      tags: [API Keys]
+      security:
+        - sessionAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ApiKeyId"
+      responses:
+        "200":
+          description: Key revoked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: API key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ════════════════════════════════════════════════════════════
+  # INTERNAL
+  # ════════════════════════════════════════════════════════════
+
+  /internal/cache/invalidate:
+    post:
+      operationId: invalidateCache
+      summary: Invalidate Astro route cache by tags
+      description: |
+        Called by the Hono API at publish/unpublish time. Protected by a shared
+        secret (`x-internal-secret` header). Only accessible on the internal
+        Docker network.
+      tags: [Internal]
+      parameters:
+        - name: x-internal-secret
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CacheInvalidateRequest"
+      responses:
+        "200":
+          description: Cache invalidated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "401":
+          description: Invalid or missing internal secret
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
