@@ -1,0 +1,53 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import type { SidebarItem } from "../lib/tree";
+
+interface BreadcrumbItem {
+  path: string;
+  title: string;
+}
+
+interface Props {
+  title: string;
+  description?: string | null;
+  breadcrumbs?: BreadcrumbItem[];
+  hasSidebar?: boolean;
+  publishedAt?: Date | null;
+  sidebar?: SidebarItem[];
+}
+
+const {
+  title,
+  description = null,
+  breadcrumbs = [],
+  hasSidebar = false,
+  publishedAt = null,
+  sidebar = [],
+} = Astro.props;
+---
+
+<StarlightPage
+  frontmatter={{
+    title,
+    description: description ?? undefined,
+    editUrl: false,
+    lastUpdated: publishedAt ?? undefined,
+    tableOfContents: false,
+  }}
+  hasSidebar={hasSidebar}
+  sidebar={sidebar}
+>
+  {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
+  <div class="doc-layout">
+    <slot />
+  </div>
+</StarlightPage>
+
+<style>
+  .doc-layout {
+    display: grid;
+    gap: 1.5rem;
+  }
+</style>

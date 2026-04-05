@@ -1,0 +1,67 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import { getRootWorks } from "../lib/db";
+
+export const prerender = false;
+
+Astro.cache.set({
+  maxAge: 60 * 60,
+  swr: 60 * 60 * 24,
+  tags: ["doc:index"],
+});
+
+const works = await getRootWorks();
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Braille Reference Library",
+    description:
+      "Accessible public documentation built from the latest published braille content.",
+    editUrl: false,
+    tableOfContents: false,
+  }}
+  hasSidebar={false}
+>
+  <section class="landing-hero">
+    <p class="landing-hero__eyebrow">Public docs</p>
+    <h2>
+      Published reference works, rendered from the latest approved braille
+      content.
+    </h2>
+    <p class="landing-hero__body">
+      Browse codebooks, manuals, and standards with a screen-reader-friendly
+      layout and exact braille block spacing preserved.
+    </p>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section__header">
+      <h2>Available works</h2>
+      <p>
+        {works.length} published work{works.length === 1 ? "" : "s"}
+      </p>
+    </div>
+
+    {works.length > 0 ? (
+      <ul class="work-grid">
+        {works.map((work) => (
+          <li>
+            <a href={`/${work.path}`} class="work-card">
+              <span class="work-card__path">/{work.path}</span>
+              <span class="work-card__title">{work.title}</span>
+              <span class="work-card__description">
+                {work.description || "Open this work and browse its published pages."}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="landing-empty">
+        No works have been published yet.
+      </p>
+    )}
+  </section>
+</StarlightPage>

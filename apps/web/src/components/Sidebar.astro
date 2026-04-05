@@ -1,0 +1,164 @@
+---
+import type { StarlightRouteData } from "@astrojs/starlight/route-data";
+import MobileMenuFooter from "@astrojs/starlight/components/MobileMenuFooter.astro";
+
+type SidebarEntries = StarlightRouteData["sidebar"];
+type SidebarEntry = SidebarEntries[number];
+
+interface Props {
+  entries?: SidebarEntries;
+  nested?: boolean;
+}
+
+const entries = Astro.props.entries ?? Astro.locals.starlightRoute.sidebar;
+const nested = Astro.props.nested ?? false;
+
+function containsCurrent(entry: SidebarEntry): boolean {
+  if (entry.type === "link") {
+    return entry.isCurrent;
+  }
+
+  return entry.entries.some(containsCurrent);
+}
+---
+
+{!nested && (
+  <nav aria-label="Documentation" class="docs-sidebar">
+    <Astro.self entries={entries} nested={true} />
+    <div class="docs-sidebar__footer md:sl-hidden">
+      <MobileMenuFooter />
+    </div>
+  </nav>
+)}
+
+{nested && (
+  <ul class="docs-sidebar__list">
+    {entries.map((entry) =>
+      entry.type === "link" ? (
+        <li class="docs-sidebar__item">
+          <a
+            href={entry.href}
+            class:list={[
+              "docs-sidebar__link",
+              { "is-current": entry.isCurrent },
+            ]}
+            aria-current={entry.isCurrent ? "page" : undefined}
+            {...entry.attrs}
+          >
+            <span>{entry.label}</span>
+          </a>
+        </li>
+      ) : (
+        <li class="docs-sidebar__item docs-sidebar__item--group">
+          <details open={containsCurrent(entry) || !entry.collapsed}>
+            <summary
+              class="docs-sidebar__summary"
+              aria-expanded={
+                containsCurrent(entry) || !entry.collapsed ? "true" : "false"
+              }
+            >
+              <span>{entry.label}</span>
+            </summary>
+            <Astro.self entries={entry.entries} nested={true} />
+          </details>
+        </li>
+      ),
+    )}
+  </ul>
+)}
+
+<style>
+  .docs-sidebar {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .docs-sidebar__list {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .docs-sidebar__item {
+    margin: 0;
+  }
+
+  .docs-sidebar__link,
+  .docs-sidebar__summary {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 2.4rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 0.65rem;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    transition:
+      border-color 120ms ease,
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .docs-sidebar__summary {
+    cursor: pointer;
+    list-style: none;
+    justify-content: space-between;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0)
+    );
+  }
+
+  .docs-sidebar__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .docs-sidebar__summary::after {
+    content: "+";
+    font-size: 1rem;
+    color: var(--sl-color-gray-4);
+  }
+
+  details[open] > .docs-sidebar__summary::after {
+    content: "−";
+  }
+
+  .docs-sidebar__link:hover,
+  .docs-sidebar__link:focus-visible,
+  .docs-sidebar__summary:hover,
+  .docs-sidebar__summary:focus-visible {
+    border-color: rgba(91, 138, 126, 0.45);
+    background-color: rgba(91, 138, 126, 0.12);
+    color: var(--sl-color-text);
+  }
+
+  .docs-sidebar__link.is-current {
+    border-color: rgba(91, 138, 126, 0.5);
+    background: linear-gradient(
+      135deg,
+      rgba(91, 138, 126, 0.2),
+      rgba(91, 138, 126, 0.08)
+    );
+    color: var(--sl-color-text);
+    font-weight: 700;
+  }
+
+  .docs-sidebar__item--group > details {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .docs-sidebar__item--group > details > .docs-sidebar__list {
+    padding-inline-start: 0.75rem;
+    border-inline-start: 1px solid var(--sl-color-hairline-light);
+  }
+
+  .docs-sidebar__footer {
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--sl-color-hairline-light);
+  }
+</style>

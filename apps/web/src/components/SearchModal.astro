@@ -1,0 +1,391 @@
+---
+const apiBase = (import.meta.env.PUBLIC_API_URL ?? "").replace(/\/$/, "");
+---
+
+<public-docs-search data-api-base={apiBase}>
+  <button
+    type="button"
+    data-open-modal
+    aria-label="Search documentation"
+    aria-keyshortcuts="Control+K"
+  >
+    <span class="search-trigger__icon" aria-hidden="true">/</span>
+    <span class="search-trigger__label">Search</span>
+    <kbd aria-hidden="true">
+      <kbd data-modifier>Ctrl</kbd>
+      <kbd>K</kbd>
+    </kbd>
+  </button>
+
+  <dialog class="search-dialog" aria-label="Search documentation">
+    <div class="search-dialog__panel" role="document">
+      <div class="search-dialog__header">
+        <label class="search-field">
+          <span class="sl-hidden">Search documentation</span>
+          <input
+            type="search"
+            data-input
+            autocomplete="off"
+            placeholder="Search published docs"
+          />
+        </label>
+        <button type="button" data-close-modal class="search-dialog__close">
+          Close
+        </button>
+      </div>
+
+      <p class="search-dialog__status" data-status>
+        Type to search published docs.
+      </p>
+
+      <ul class="search-results" data-results></ul>
+    </div>
+  </dialog>
+</public-docs-search>
+
+<script>
+  interface SearchResult {
+    path: string;
+    score?: number;
+    snippet?: string;
+    title: string;
+  }
+
+  class PublicDocsSearch extends HTMLElement {
+    private abortController: AbortController | null = null;
+    private debounceTimer: number | undefined;
+    private previousFocus: HTMLElement | null = null;
+
+    constructor() {
+      super();
+
+      const openButton =
+        this.querySelector<HTMLButtonElement>("[data-open-modal]");
+      const closeButton =
+        this.querySelector<HTMLButtonElement>("[data-close-modal]");
+      const dialog = this.querySelector<HTMLDialogElement>("dialog");
+      const input = this.querySelector<HTMLInputElement>("[data-input]");
+      const results = this.querySelector<HTMLUListElement>("[data-results]");
+      const status = this.querySelector<HTMLElement>("[data-status]");
+      const modifier = this.querySelector<HTMLElement>("[data-modifier]");
+
+      if (
+        !openButton ||
+        !closeButton ||
+        !dialog ||
+        !input ||
+        !results ||
+        !status
+      ) {
+        return;
+      }
+
+      if (modifier && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+        modifier.textContent = "⌘";
+        openButton.setAttribute("aria-keyshortcuts", "Meta+K");
+      }
+
+      const closeModal = () => {
+        if (dialog.open) {
+          dialog.close();
+        }
+      };
+
+      const openModal = () => {
+        this.previousFocus = document.activeElement as HTMLElement | null;
+        dialog.showModal();
+        document.body.toggleAttribute("data-search-modal-open", true);
+        input.focus();
+        input.select();
+      };
+
+      openButton.addEventListener("click", openModal);
+      closeButton.addEventListener("click", closeModal);
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+          closeModal();
+        }
+      });
+
+      dialog.addEventListener("close", () => {
+        document.body.toggleAttribute("data-search-modal-open", false);
+        this.abortController?.abort();
+        this.abortController = null;
+
+        if (this.previousFocus) {
+          this.previousFocus.focus();
+        }
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+          event.preventDefault();
+          dialog.open ? closeModal() : openModal();
+        }
+      });
+
+      input.addEventListener("input", () => {
+        window.clearTimeout(this.debounceTimer);
+        this.debounceTimer = window.setTimeout(() => {
+          void this.search(input.value, results, status);
+        }, 300);
+      });
+    }
+
+    private setStatus(status: HTMLElement, message: string) {
+      status.textContent = message;
+    }
+
+    private clearResults(results: HTMLUListElement) {
+      results.replaceChildren();
+    }
+
+    private renderResults(results: HTMLUListElement, entries: SearchResult[]) {
+      this.clearResults(results);
+
+      for (const entry of entries) {
+        const item = document.createElement("li");
+        item.className = "search-results__item";
+
+        const link = document.createElement("a");
+        link.href = `/${entry.path}`;
+        link.className = "search-results__link";
+
+        const title = document.createElement("span");
+        title.className = "search-results__title";
+        title.textContent = entry.title;
+
+        const path = document.createElement("span");
+        path.className = "search-results__path";
+        path.textContent = `/${entry.path}`;
+
+        const snippet = document.createElement("span");
+        snippet.className = "search-results__snippet";
+        snippet.textContent = entry.snippet || "Open this page.";
+
+        link.append(title, path, snippet);
+        item.append(link);
+        results.append(item);
+      }
+    }
+
+    private async search(
+      rawQuery: string,
+      results: HTMLUListElement,
+      status: HTMLElement,
+    ) {
+      const query = rawQuery.trim();
+
+      if (!query) {
+        this.abortController?.abort();
+        this.abortController = null;
+        this.clearResults(results);
+        this.setStatus(status, "Type to search published docs.");
+        return;
+      }
+
+      this.abortController?.abort();
+      this.abortController = new AbortController();
+      this.setStatus(status, "Searching…");
+
+      try {
+        const apiBase = this.dataset.apiBase || "";
+        const searchUrl = new URL(
+          `${apiBase}/api/search`,
+          window.location.origin,
+        );
+        searchUrl.searchParams.set("q", query);
+        searchUrl.searchParams.set("limit", "8");
+
+        const response = await fetch(searchUrl.toString(), {
+          signal: this.abortController.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Search failed with status ${response.status}`);
+        }
+
+        const payload = (await response.json()) as {
+          results?: SearchResult[];
+        };
+        const entries = Array.isArray(payload.results) ? payload.results : [];
+
+        if (entries.length === 0) {
+          this.clearResults(results);
+          this.setStatus(status, "No published pages matched that search.");
+          return;
+        }
+
+        this.setStatus(
+          status,
+          `${entries.length} result${entries.length === 1 ? "" : "s"}`,
+        );
+        this.renderResults(results, entries);
+      } catch (error) {
+        if ((error as Error).name === "AbortError") {
+          return;
+        }
+
+        this.clearResults(results);
+        this.setStatus(
+          status,
+          "Search is unavailable right now. Please try again in a moment.",
+        );
+      }
+    }
+  }
+
+  if (!customElements.get("public-docs-search")) {
+    customElements.define("public-docs-search", PublicDocsSearch);
+  }
+</script>
+
+<style>
+  public-docs-search {
+    display: contents;
+  }
+
+  [data-open-modal] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.6rem;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid rgba(91, 138, 126, 0.32);
+    border-radius: 999px;
+    background:
+      linear-gradient(135deg, rgba(91, 138, 126, 0.18), rgba(91, 138, 126, 0.02)),
+      var(--sl-color-bg-nav);
+    color: var(--sl-color-text);
+    cursor: pointer;
+  }
+
+  [data-open-modal]:hover,
+  [data-open-modal]:focus-visible {
+    border-color: rgba(91, 138, 126, 0.52);
+    color: var(--sl-color-white);
+  }
+
+  .search-trigger__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    background-color: rgba(91, 138, 126, 0.18);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  [data-open-modal] kbd {
+    display: none;
+    font-family: var(--__sl-font-mono);
+  }
+
+  @media (min-width: 50rem) {
+    [data-open-modal] kbd {
+      display: inline-flex;
+      gap: 0.25rem;
+      align-items: center;
+      color: var(--sl-color-gray-3);
+    }
+  }
+
+  .search-dialog {
+    width: min(44rem, calc(100vw - 2rem));
+    max-width: 44rem;
+    padding: 0;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 1.2rem;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-text);
+    box-shadow: var(--sl-shadow-lg);
+  }
+
+  .search-dialog::backdrop {
+    background: var(--sl-color-backdrop-overlay);
+    backdrop-filter: blur(0.3rem);
+  }
+
+  .search-dialog__panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .search-dialog__header {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .search-field {
+    flex: 1;
+  }
+
+  .search-field input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--sl-color-text);
+    font: inherit;
+  }
+
+  .search-field input:focus {
+    outline: 2px solid rgba(91, 138, 126, 0.52);
+    outline-offset: 2px;
+  }
+
+  .search-dialog__close {
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.9rem;
+    background: transparent;
+    color: var(--sl-color-text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .search-results {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .search-results__link {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(91, 138, 126, 0.2);
+    border-radius: 1rem;
+    text-decoration: none;
+    color: var(--sl-color-text);
+    background:
+      linear-gradient(135deg, rgba(91, 138, 126, 0.12), rgba(91, 138, 126, 0.03)),
+      rgba(255, 255, 255, 0.02);
+  }
+
+  .search-results__link:hover,
+  .search-results__link:focus-visible {
+    border-color: rgba(91, 138, 126, 0.45);
+    transform: translateY(-1px);
+  }
+
+  .search-results__title {
+    font-weight: 700;
+  }
+
+  .search-results__path,
+  .search-results__snippet,
+  .search-dialog__status {
+    color: var(--sl-color-gray-3);
+  }
+</style>

@@ -1,0 +1,31 @@
+pre[data-braille-block] {
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid rgba(138, 116, 74, 0.28);
+  border-radius: 0.85rem;
+  background:
+    linear-gradient(135deg, rgba(244, 237, 220, 0.9), rgba(234, 226, 205, 0.75)),
+    #f7f1e3;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  font-family: "IBM Plex Mono", "Courier New", Courier, monospace;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  text-transform: none;
+  letter-spacing: normal;
+  word-spacing: normal;
+  tab-size: 8;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+pre[data-braille-block] code {
+  display: block;
+  padding: 0;
+  background: none;
+  color: #1e1d19;
+  font-family: inherit;
+  white-space: inherit;
+}

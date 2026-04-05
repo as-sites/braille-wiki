@@ -1,0 +1,71 @@
+---
+import DocLayout from "../layouts/DocLayout.astro";
+import {
+  getBreadcrumbs,
+  getPublishedDocument,
+  getSidebarTree,
+} from "../lib/db";
+import { decoratePublishedHtml } from "../lib/rendering";
+import { buildSidebar } from "../lib/tree";
+
+export const prerender = false;
+
+const requestedPath = Astro.params.path?.split("/").filter(Boolean).join("/") ?? "";
+const document = requestedPath
+  ? await getPublishedDocument(requestedPath)
+  : null;
+
+let breadcrumbs: Awaited<ReturnType<typeof getBreadcrumbs>> = [];
+let renderedHtml = "";
+let sidebar: ReturnType<typeof buildSidebar> = [];
+
+if (document) {
+  Astro.cache.set({
+    maxAge: 60 * 60,
+    swr: 60 * 60 * 24,
+    tags: [`doc:${requestedPath}`],
+  });
+
+  const rootPath = requestedPath.split("/")[0] ?? requestedPath;
+  const [breadcrumbRows, sidebarRows] = await Promise.all([
+    getBreadcrumbs(requestedPath),
+    getSidebarTree(rootPath),
+  ]);
+
+  breadcrumbs = breadcrumbRows;
+  renderedHtml = decoratePublishedHtml(document.renderedHtml ?? "");
+  sidebar = buildSidebar(sidebarRows, requestedPath);
+} else {
+  Astro.response.status = 404;
+}
+---
+
+{document ? (
+  <DocLayout
+    title={document.title}
+    description={document.description}
+    breadcrumbs={breadcrumbs}
+    hasSidebar={sidebar.length > 0}
+    publishedAt={document.publishedAt}
+    sidebar={sidebar}
+  >
+    {document.description && <p class="doc-lede">{document.description}</p>}
+    <article
+      class="sl-markdown-content braille-doc-content"
+      set:html={renderedHtml}
+    />
+  </DocLayout>
+) : (
+  <DocLayout
+    title="Page not found"
+    description="The requested published page could not be found."
+    hasSidebar={false}
+  >
+    <div class="doc-not-found">
+      <p>This page is unavailable or has not been published yet.</p>
+      <p>
+        <a href="/">Return to the library home</a>
+      </p>
+    </div>
+  </DocLayout>
+)}

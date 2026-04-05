@@ -1,0 +1,64 @@
+---
+interface BreadcrumbItem {
+  path: string;
+  title: string;
+}
+
+interface Props {
+  items?: BreadcrumbItem[];
+}
+
+const { items = [] } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="doc-breadcrumbs">
+  <ol>
+    <li>
+      <a href="/">Home</a>
+    </li>
+    {items.map((item, index) => (
+      <li>
+        {index === items.length - 1 ? (
+          <span aria-current="page">{item.title}</span>
+        ) : (
+          <a href={`/${item.path}`}>{item.title}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .doc-breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+
+  .doc-breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .doc-breadcrumbs li + li::before {
+    content: "/";
+    color: var(--sl-color-gray-4);
+  }
+
+  .doc-breadcrumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .doc-breadcrumbs a:hover,
+  .doc-breadcrumbs a:focus-visible {
+    color: var(--sl-color-text-accent);
+    text-decoration: underline;
+  }
+</style>

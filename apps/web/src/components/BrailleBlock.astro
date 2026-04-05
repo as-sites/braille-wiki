@@ -1,0 +1,25 @@
+---
+import { buildBrailleAriaLabel } from "../lib/rendering";
+
+interface Props {
+  brailleType?: string;
+  caption?: string | null;
+}
+
+const {
+  brailleType = "UEB Grade 2",
+  caption = null,
+} = Astro.props;
+
+const ariaLabel = buildBrailleAriaLabel(brailleType, caption);
+---
+
+<pre
+  data-braille-block
+  data-braille-type={brailleType}
+  data-caption={caption ?? undefined}
+  role="img"
+  aria-label={ariaLabel}
+>
+  <code><slot /></code>
+</pre>
