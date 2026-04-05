@@ -3,6 +3,7 @@ import { serve } from "@hono/node-server";
 import { auth } from "./auth/index";
 import { createApp } from "./app";
 import { buildIndex } from "./lib/search-index";
+import { registerMcpRoutes } from "./mcp";
 import { registerRoutes } from "./routes";
 import { seedAdmin } from "./seed";
 
@@ -22,6 +23,7 @@ app.on(["GET", "POST"], "/api/auth/**", (c: any) => {
 // Register all public and admin routes
 // ---------------------------------------------------------------------------
 registerRoutes(app);
+registerMcpRoutes(app);
 
 // ---------------------------------------------------------------------------
 // OpenAPI route — serve the generated OpenAPI spec

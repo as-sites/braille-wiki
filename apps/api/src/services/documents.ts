@@ -229,17 +229,8 @@ export async function getChildrenForPath(
     return works;
   }
 
-  const allDocuments = await dbListDocuments(database, {});
-  const children = allDocuments.filter((doc) => {
-    const parts = doc.path.split("/");
-    const parentParts = parentPath.split("/");
-    if (parts.length !== parentParts.length + 1) {
-      return false;
-    }
-    return doc.path.startsWith(`${parentPath}/`);
-  });
-
-  return children;
+  const depth = parentPath.split("/").length + 1;
+  return getChildren(database, parentPath, depth);
 }
 
 /**
