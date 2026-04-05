@@ -219,6 +219,41 @@ export const TreeNode: z.ZodType<any> = z.object({
 export const TreeResponse = TreeNode;
 
 // ============================================================================
+// Media Schemas
+// ============================================================================
+
+export const MediaResponse = z.object({
+  id: z.string().uuid(),
+  storageKey: z.string(),
+  filename: z.string(),
+  mimeType: z.string(),
+  sizeBytes: z.number().int(),
+  width: z.number().int().nullable(),
+  height: z.number().int().nullable(),
+  altText: z.string().nullable(),
+  uploadedBy: z.string().uuid().nullable(),
+  createdAt: z.string().datetime(),
+  url: z.string(),
+});
+
+export const MediaListResponse = z.object({
+  media: z.array(MediaResponse),
+  total: z.number().int(),
+  limit: z.number().int(),
+  offset: z.number().int(),
+});
+
+export const UpdateMediaRequest = z.object({
+  altText: z.string().nullable().optional(),
+  filename: z.string().optional(),
+});
+
+export const DeleteMediaResponse = z.object({
+  id: z.string().uuid(),
+  referenced: z.boolean(),
+});
+
+// ============================================================================
 // Error Schemas
 // ============================================================================
 

@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, sql } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 
 import type { DatabaseClient } from "../client";
@@ -7,6 +7,8 @@ import { media } from "../schema";
 export interface MediaListFilters {
   mimeType?: string;
   search?: string;
+  limit?: number;
+  offset?: number;
 }
 
 export interface UpdateMediaInput {
@@ -53,11 +55,25 @@ export async function listMedia(
     );
   }
 
-  return database
-    .select()
-    .from(media)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(desc(media.createdAt));
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+  const limit = filters.limit ?? 50;
+  const offset = filters.offset ?? 0;
+
+  const [rows, [{ value: total }]] = await Promise.all([
+    database
+      .select()
+      .from(media)
+      .where(where)
+      .orderBy(desc(media.createdAt))
+      .limit(limit)
+      .offset(offset),
+    database
+      .select({ value: count() })
+      .from(media)
+      .where(where),
+  ]);
+
+  return { rows, total: Number(total), limit, offset };
 }
 
 export async function updateMedia(
