@@ -14,13 +14,14 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@neondatabase/serverless": "latest",
     "drizzle-orm": "latest",
     "drizzle-zod": "latest",
+    "pg": "latest",
     "zod": "latest"
   },
   "devDependencies": {
     "@types/node": "latest",
+    "@types/pg": "latest",
     "dotenv": "latest",
     "drizzle-kit": "latest"
   }

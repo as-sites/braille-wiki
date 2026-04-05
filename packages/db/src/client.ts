@@ -1,5 +1,5 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
 import * as schema from "./schema";
 
@@ -15,7 +15,9 @@ function getDatabaseUrl(): string {
   return databaseUrl;
 }
 
-export const connection = neon(getDatabaseUrl());
+export const connection = new Pool({
+  connectionString: getDatabaseUrl(),
+});
 
 export const db = drizzle({
   client: connection,

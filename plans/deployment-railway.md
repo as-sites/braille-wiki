@@ -47,6 +47,16 @@ Required:
 - `R2_SECRET_ACCESS_KEY`
 - `R2_BUCKET_NAME`
 - `R2_PUBLIC_URL`
+
+Alternative (Railway Buckets or any S3-compatible provider):
+
+- `S3_ENDPOINT`
+- `S3_REGION`
+- `S3_ACCESS_KEY_ID`
+- `S3_SECRET_ACCESS_KEY`
+- `S3_BUCKET_NAME`
+- `S3_PUBLIC_URL`
+- `S3_FORCE_PATH_STYLE`
 - `ADMIN_ORIGIN` (admin public URL)
 
 Optional:
@@ -97,3 +107,4 @@ To make this work in Railway:
 
 - In-memory cache in Astro is instance-local. If web runs multiple instances, invalidation must hit each instance or move to a shared cache strategy.
 - The current API Docker runtime executes TypeScript via Node + tsx import; this is acceptable on Railway, but you can optimize later with an explicit build artifact/runtime split.
+- Storage uses an S3-compatible client. You can keep Cloudflare R2 or switch to Railway Buckets by setting `S3_*` variables.

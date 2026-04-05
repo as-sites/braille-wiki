@@ -12,7 +12,7 @@ import {
 } from "@braille-docs/db";
 
 import { NotFoundError } from "../lib/errors";
-import { deleteFromR2, getPublicUrl, uploadToR2 } from "../lib/r2";
+import { deleteObject, getPublicUrl, uploadObject } from "../lib/storage";
 
 const database = db;
 
@@ -59,7 +59,7 @@ export async function uploadMedia(input: UploadMediaInput) {
   const uuid = randomUUID();
   const storageKey = `media/${uuid}${ext}`;
 
-  await uploadToR2(storageKey, file.buffer, file.type);
+  await uploadObject(storageKey, file.buffer, file.type);
 
   const { width, height } = getImageDimensions(file.buffer, file.type);
 
@@ -121,7 +121,7 @@ export async function deleteMedia(id: string) {
   // Check if the media ID is referenced in any document's prosemirror_json
   const referenced = await isMediaReferenced(id);
 
-  await deleteFromR2(mediaRow.storageKey);
+  await deleteObject(mediaRow.storageKey);
   await dbDeleteMedia(database, id);
 
   return { id, referenced };
