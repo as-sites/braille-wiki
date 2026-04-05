@@ -23,9 +23,15 @@ RUN pnpm --filter @braille-docs/editor-schema build \
   && pnpm --filter @braille-docs/shared build \
   && pnpm --filter @braille-docs/admin build
 
-FROM nginx:1.27-alpine AS runner
+FROM nginx:1.29.7-alpine AS runner
 
-COPY apps/admin/nginx.conf /etc/nginx/conf.d/default.conf
+ENV PORT=8080
+
+RUN apk add --no-cache gettext
+
+COPY apps/admin/nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=builder /app/apps/admin/dist /usr/share/nginx/html
 
 EXPOSE 8080
+
+CMD ["/bin/sh", "-c", "envsubst '$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

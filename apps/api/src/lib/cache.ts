@@ -1,7 +1,7 @@
 /**
  * Invalidate Astro cache tags.
  *
- * Calls POST /internal/cache/invalidate on the Astro app.
+ * Calls POST /internal/cache-invalidate on the Astro app.
  * Fails gracefully — a missing or unreachable Astro app is logged but not fatal.
  */
 export async function invalidateCacheTags(tags: string[]): Promise<void> {
@@ -13,7 +13,7 @@ export async function invalidateCacheTags(tags: string[]): Promise<void> {
   }
 
   try {
-    const response = await fetch(`${astroUrl}/internal/cache/invalidate`, {
+    const response = await fetch(`${astroUrl}/internal/cache-invalidate`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
