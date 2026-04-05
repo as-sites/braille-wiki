@@ -1,7 +1,0 @@
-# mise.toml — toolchain versions for local development
-# Install mise: https://mise.jdx.dev/getting-started.html
-# Then run:  mise install
-#            pip install -r requirements.txt
-
-[tools]
-python = "3.12"

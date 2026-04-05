@@ -19,11 +19,11 @@
 
 @font-face {
   font-family: "SimBraille";
-  src: url("https://cdn.ay.ms/simbrl.ttf") format("truetype");
+   src: url("../assets/fonts/simbrl.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+2800-U+28FF; /* Braille Patterns block only */
+  unicode-range: U+2800-28FF; /* Braille Patterns block only */
 }
 
 /* Apply SimBraille (with monospace fallback) to every element.
