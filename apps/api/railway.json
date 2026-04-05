@@ -1,0 +1,18 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "apps/api/Dockerfile",
+    "watchPatterns": [
+      "/apps/api/**",
+      "/packages/db/**",
+      "/packages/editor-schema/**",
+      "/packages/shared/**",
+      "/package.json",
+      "/pnpm-lock.yaml",
+      "/pnpm-workspace.yaml",
+      "/nx.json",
+      "/tsconfig.base.json"
+    ]
+  }
+}

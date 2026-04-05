@@ -2,6 +2,34 @@
 
 This repo is ready to deploy to Railway using one service per app and each service pointing to its own Dockerfile.
 
+## Config as Code (Recommended)
+
+Railway supports config as code using `railway.json` or `railway.toml`.
+
+This repo now includes one config file per app:
+
+- `apps/api/railway.json`
+- `apps/web/railway.json`
+- `apps/admin/railway.json`
+
+Each file defines:
+
+- Docker builder (`DOCKERFILE`)
+- Dockerfile path for that service
+- Monorepo-aware watch patterns for the app and shared workspace packages
+
+Important Railway behavior from docs:
+
+- Config in code overrides service settings for that deployment.
+- The dashboard is not rewritten from config files.
+- Config file lookup does not follow Root Directory automatically.
+
+In each Railway service, set **Railway Config File** to an absolute repo path:
+
+- API: `/apps/api/railway.json`
+- Web: `/apps/web/railway.json`
+- Admin: `/apps/admin/railway.json`
+
 ## Deployment Model
 
 - Create a single Railway project connected to this repository.
@@ -20,6 +48,10 @@ For each Railway service, set:
 - Source repo: this monorepo
 - Root directory: `.`
 - Builder: Dockerfile
+- Railway Config File:
+  - API: `/apps/api/railway.json`
+  - Web: `/apps/web/railway.json`
+  - Admin: `/apps/admin/railway.json`
 - Dockerfile path:
   - API: `apps/api/Dockerfile`
   - Web: `apps/web/Dockerfile`
