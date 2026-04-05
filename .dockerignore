@@ -1,0 +1,19 @@
+# VCS
+.git
+.gitignore
+
+# Dependencies
+**/node_modules
+
+# Build output
+**/dist
+**/.astro
+**/.nx
+
+# Logs and local env
+**/*.log
+.env
+
+# Tooling/editor
+.vscode
+.DS_Store
