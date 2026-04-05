@@ -22,7 +22,7 @@ export const documentRevisions = pgTable(
       .$type<ProsemirrorDocument>()
       .notNull(),
     action: text("action", { enum: documentRevisionActionValues }).notNull(),
-    createdBy: uuid("created_by"),
+    createdBy: text("created_by"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

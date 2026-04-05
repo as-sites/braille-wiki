@@ -203,6 +203,9 @@ importers:
 
   packages/db:
     dependencies:
+      dotenv:
+        specifier: latest
+        version: 17.4.0
       drizzle-orm:
         specifier: latest
         version: 0.45.2(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.15)(pg@8.20.0)
@@ -222,9 +225,6 @@ importers:
       '@types/pg':
         specifier: latest
         version: 8.20.0
-      dotenv:
-        specifier: latest
-        version: 17.4.0
       drizzle-kit:
         specifier: latest
         version: 0.31.10

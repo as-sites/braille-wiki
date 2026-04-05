@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const authBaseUrl = import.meta.env.VITE_API_URL ?? "";
+
 type AuthUser = {
   id: string;
   name: string;
@@ -19,7 +21,7 @@ export function useAuth() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/get-session", {
+      const response = await fetch(`${authBaseUrl}/api/auth/get-session`, {
         method: "GET",
         credentials: "include",
       });
@@ -62,7 +64,7 @@ export function useAuth() {
   }, []);
 
   async function logout() {
-    await fetch("/api/auth/sign-out", {
+    await fetch(`${authBaseUrl}/api/auth/sign-out`, {
       method: "POST",
       credentials: "include",
       headers: {

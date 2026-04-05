@@ -166,8 +166,10 @@ export function DocumentEditPage() {
       const updated = await publishDocument(id);
       setDocument(updated);
       setError(null);
-    } catch {
-      setError("Publish endpoint is not fully implemented yet (planned for step 08).");
+    } catch (publishError) {
+      const message =
+        publishError instanceof Error ? publishError.message : "Failed to publish document";
+      setError(message);
     }
   }
 

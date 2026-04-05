@@ -1,7 +1,13 @@
+import { config as loadEnv } from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { resolve } from "node:path";
 import { Pool } from "pg";
 
 import * as schema from "./schema";
+
+// Support running from both workspace root and package/app directories.
+loadEnv();
+loadEnv({ path: resolve(process.cwd(), "../../.env"), override: false });
 
 function getDatabaseUrl(): string {
   const databaseUrl = process.env.DATABASE_URL;

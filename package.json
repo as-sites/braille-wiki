@@ -2,7 +2,7 @@
   "name": "braille-wiki",
   "private": true,
   "scripts": {
-    "dev": "nx run-many -t dev",
+    "dev": "nx run-many -t dev --projects=@braille-docs/api,@braille-docs/web,@braille-docs/admin --parallel=3",
     "build": "nx run-many -t build",
     "typecheck": "nx run-many -t typecheck",
     "lint": "nx run-many -t lint"

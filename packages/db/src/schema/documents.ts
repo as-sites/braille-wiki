@@ -39,8 +39,8 @@ export const documents = pgTable(
       jsonb("prosemirror_json").$type<ProsemirrorDocument>(),
     publishedProsemirrorJson: jsonb("published_prosemirror_json").$type<ProsemirrorDocument>(),
     renderedHtml: text("rendered_html"),
-    createdBy: uuid("created_by"),
-    updatedBy: uuid("updated_by"),
+    createdBy: text("created_by"),
+    updatedBy: text("updated_by"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

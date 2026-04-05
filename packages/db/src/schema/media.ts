@@ -10,7 +10,7 @@ export const media = pgTable("media", {
   width: integer("width"),
   height: integer("height"),
   altText: text("alt_text"),
-  uploadedBy: uuid("uploaded_by"),
+  uploadedBy: text("uploaded_by"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

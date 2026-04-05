@@ -18,17 +18,32 @@ export async function seedAdmin(): Promise<void> {
     return;
   }
 
-  const rows = await db.execute<{ count: string }>(
-    sql`SELECT COUNT(*)::text AS count FROM "user"`,
-  );
-  const count = parseInt(rows.rows[0]?.count ?? "0", 10);
+  let userExists = false;
+  try {
+    const rows = await db.execute<{ id: string }>(
+      sql`SELECT id FROM "user" WHERE email = ${email} LIMIT 1`,
+    );
+    userExists = rows.rows.length > 0;
+  } catch (err: unknown) {
+    const code = (err as any)?.cause?.code ?? (err as any)?.code;
+    if (code === "42P01") {
+      console.warn(
+        "[seed] Database tables not found — run migrations first: pnpm --filter @braille-docs/db db:migrate",
+      );
+      return;
+    }
+    throw err;
+  }
 
-  if (count > 0) {
-    console.log(`[seed] ${count} user(s) already exist — skipping admin seed.`);
+  if (userExists) {
+    await db.execute(
+      sql`UPDATE "user" SET role = 'admin' WHERE email = ${email}`,
+    );
+    console.log(`[seed] User ${email} already exists — ensured admin role.`);
     return;
   }
 
-  console.log(`[seed] No users found. Creating initial admin: ${email}`);
+  console.log(`[seed] User ${email} not found. Creating initial admin.`);
 
   await auth.api.signUpEmail({
     body: { email, password, name: "Admin" },

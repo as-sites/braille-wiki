@@ -1,12 +1,21 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey } from "@better-auth/api-key";
-import { db } from "@braille-docs/db";
+import { account, apikey, db, session, user, verification } from "@braille-docs/db";
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
 
-  database: drizzleAdapter(db, { provider: "pg" }),
+  database: drizzleAdapter(db, {
+    provider: "pg",
+    schema: {
+      user,
+      session,
+      account,
+      verification,
+      apikey,
+    },
+  }),
 
   emailAndPassword: {
     enabled: true,

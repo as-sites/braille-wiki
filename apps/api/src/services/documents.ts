@@ -26,6 +26,13 @@ import {
 
 const database = db;
 
+function createEmptyProsemirrorDoc(): Record<string, unknown> {
+  return {
+    type: "doc",
+    content: [{ type: "paragraph" }],
+  };
+}
+
 /**
  * Get a published document by path (public read endpoint).
  */
@@ -96,6 +103,7 @@ export async function createDocument(
     title: data.title,
     description: data.description ?? null,
     status: "draft",
+    prosemirrorJson: createEmptyProsemirrorDoc(),
     createdBy: userId,
     updatedBy: userId,
   });
@@ -103,7 +111,8 @@ export async function createDocument(
   // Create initial revision
   await createRevision(database, {
     documentId: document.id,
-    prosemirrorJson: document.prosemirrorJson as any,
+    prosemirrorJson: (document.prosemirrorJson ??
+      createEmptyProsemirrorDoc()) as any,
     action: "save",
     createdBy: userId,
   });
@@ -144,7 +153,9 @@ export async function saveDocument(
   // Create revision
   await createRevision(database, {
     documentId: id,
-    prosemirrorJson: (data.prosemirrorJson ?? updated.prosemirrorJson) as any,
+    prosemirrorJson: (data.prosemirrorJson ??
+      updated.prosemirrorJson ??
+      createEmptyProsemirrorDoc()) as any,
     action: "save",
     createdBy: userId,
   });
@@ -168,7 +179,8 @@ export async function archiveDocument(id: string, userId: string) {
   if (updated) {
     await createRevision(database, {
       documentId: id,
-      prosemirrorJson: updated.prosemirrorJson as any,
+      prosemirrorJson: (updated.prosemirrorJson ??
+        createEmptyProsemirrorDoc()) as any,
       action: "save",
       createdBy: userId,
     });

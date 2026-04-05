@@ -80,7 +80,20 @@ export async function buildIndex(): Promise<void> {
     const startedAt = Date.now();
     const nextIndex = await createSearchIndex();
     const nextIdMap = new Map<string, string>();
-    const documents = await listPublishedDocumentsForSearch(db);
+    let documents: Awaited<ReturnType<typeof listPublishedDocumentsForSearch>> = [];
+
+    try {
+      documents = await listPublishedDocumentsForSearch(db);
+    } catch (err: unknown) {
+      const code = (err as any)?.cause?.code ?? (err as any)?.code;
+      if (code === "42P01") {
+        console.warn(
+          "[api] Search index skipped: database tables not found. Run migrations first: pnpm --filter @braille-docs/db db:push",
+        );
+      } else {
+        throw err;
+      }
+    }
 
     for (const document of documents) {
       await upsertDocument(nextIndex, nextIdMap, {

@@ -68,7 +68,6 @@ export function Toolbar({ editor }: ToolbarProps) {
                 brailleType: "UEB Grade 2",
                 caption: null,
               },
-              content: [{ type: "text", text: "" }],
             })
             .run();
         }}

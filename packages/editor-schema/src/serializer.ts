@@ -1,4 +1,5 @@
-import { generateHTML } from "@tiptap/html/server";
+import { generateHTML } from "@tiptap/html";
+import { generateHTML as generateHTMLServer } from "@tiptap/html/server";
 
 import { getExtensions } from "./extensions";
 
@@ -56,4 +57,18 @@ export function serializeToHtml(
     : prosemirrorJson;
 
   return generateHTML(json, getExtensions());
+}
+
+/**
+ * Node-safe serializer for server-side publish flow.
+ */
+export function serializeToHtmlServer(
+  prosemirrorJson: object,
+  options: SerializeOptions = {},
+): string {
+  const json = options.imageUrlResolver
+    ? (resolveImageUrls(prosemirrorJson, options.imageUrlResolver) as object)
+    : prosemirrorJson;
+
+  return generateHTMLServer(json, getExtensions());
 }

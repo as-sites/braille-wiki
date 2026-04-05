@@ -15,7 +15,7 @@ const app = createApp();
 // ---------------------------------------------------------------------------
 // Auth routes — better-auth manages /api/auth/* sub-routes
 // ---------------------------------------------------------------------------
-app.on(["GET", "POST"], "/api/auth/**", (c: any) => {
+app.on(["GET", "POST"], "/api/auth/*", (c: any) => {
   return auth.handler(c.req.raw);
 });
 

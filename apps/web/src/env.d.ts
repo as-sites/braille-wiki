@@ -8,3 +8,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare namespace App {
+  interface Locals {
+    dbDocument?: NonNullable<import("./lib/db").PublishedDocumentRecord>;
+    requestedPath?: string;
+  }
+}

@@ -8,7 +8,7 @@ import {
   updateDocument,
   type ProsemirrorDocument,
 } from "@braille-docs/db";
-import { serializeToHtml } from "@braille-docs/editor-schema";
+import { serializeToHtmlServer } from "@braille-docs/editor-schema";
 
 import { docCacheTag, invalidateCacheTags } from "../lib/cache";
 import { BusinessLogicError, NotFoundError } from "../lib/errors";
@@ -31,7 +31,7 @@ export async function publishDocument(documentId: string, userId: string) {
   }
 
   const prosemirrorJson = document.prosemirrorJson as object ?? {};
-  const renderedHtml = serializeToHtml(prosemirrorJson);
+  const renderedHtml = serializeToHtmlServer(prosemirrorJson);
 
   const published = await dbPublishDocument(
     db,

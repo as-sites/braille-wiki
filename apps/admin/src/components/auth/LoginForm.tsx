@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from "react";
 
+const authBaseUrl = import.meta.env.VITE_API_URL ?? "";
+
 type LoginFormProps = {
   onSuccess: () => void;
 };
@@ -17,7 +19,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     setError(null);
 
     try {
-      const response = await fetch("/api/auth/sign-in/email", {
+      const response = await fetch(`${authBaseUrl}/api/auth/sign-in/email`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -31,7 +33,24 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       });
 
       if (!response.ok) {
-        setError("We could not sign you in with those details.");
+        let errorMessage = "We could not sign you in with those details.";
+        try {
+          const payload = (await response.json()) as {
+            code?: string;
+            message?: string;
+          };
+
+          if (payload.message) {
+            errorMessage = payload.message;
+          }
+
+          if (payload.code) {
+            errorMessage = `${errorMessage} [${payload.code}]`;
+          }
+        } catch {
+          // Ignore non-JSON responses and keep default message.
+        }
+        setError(errorMessage);
         return;
       }
 

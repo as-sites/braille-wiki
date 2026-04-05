@@ -1,19 +1,17 @@
 ---
 import DocLayout from "../layouts/DocLayout.astro";
-import {
-  getBreadcrumbs,
-  getPublishedDocument,
-  getSidebarTree,
-} from "../lib/db";
+import { getBreadcrumbs, getSidebarTree } from "../lib/db";
 import { decoratePublishedHtml } from "../lib/rendering";
 import { buildSidebar } from "../lib/tree";
 
 export const prerender = false;
 
-const requestedPath = Astro.params.path?.split("/").filter(Boolean).join("/") ?? "";
-const document = requestedPath
-  ? await getPublishedDocument(requestedPath)
-  : null;
+const { dbDocument: document, requestedPath } = Astro.locals;
+
+// Guard against direct access to /render (not reached via middleware)
+if (!requestedPath) {
+  return new Response(null, { status: 404 });
+}
 
 let breadcrumbs: Awaited<ReturnType<typeof getBreadcrumbs>> = [];
 let renderedHtml = "";
