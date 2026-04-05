@@ -1,0 +1,183 @@
+:root {
+  --bg: #f4f4ef;
+  --panel: #ffffff;
+  --ink: #1f1f1c;
+  --ink-muted: #67675f;
+  --line: #d9d9cf;
+  --accent: #1c6d5c;
+  --warn: #8c5a12;
+  --danger: #a02323;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at top left, #fdf6e8 0%, var(--bg) 40%, #eceee7 100%);
+}
+
+a {
+  color: inherit;
+}
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  padding: 1.25rem;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, #fff9ef 0%, #f7f5ee 100%);
+}
+
+.admin-sidebar nav {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.admin-sidebar a {
+  text-decoration: none;
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.4rem;
+}
+
+.admin-sidebar a:hover {
+  background: #ebece3;
+}
+
+.admin-main {
+  padding: 1rem;
+}
+
+.admin-header {
+  margin-bottom: 1rem;
+  color: var(--ink-muted);
+}
+
+.editor-page {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.editor-page__header,
+.editor-page__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.editor-page__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+button {
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+.editor-page__status {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  color: var(--ink-muted);
+}
+
+.status-dirty {
+  color: var(--warn);
+  font-weight: 700;
+}
+
+.status-error {
+  color: var(--danger);
+  margin: 0;
+}
+
+.editor-page__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+}
+
+.editor-page__meta,
+.editor-root {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+}
+
+.editor-page__meta {
+  padding: 0.9rem;
+}
+
+.editor-page__meta label {
+  display: grid;
+  gap: 0.3rem;
+  margin-bottom: 0.8rem;
+}
+
+.editor-page__meta input,
+.editor-page__meta textarea,
+.braille-block__header input,
+.braille-block__header select {
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  padding: 0.45rem;
+  font: inherit;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  padding: 0.7rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.editor-toolbar button.is-active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.editor-content {
+  padding: 1rem;
+}
+
+.editor-content .ProseMirror {
+  min-height: 460px;
+  outline: none;
+}
+
+@media (max-width: 1000px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .editor-page__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@import "./braille-block.scss";

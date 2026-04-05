@@ -2,13 +2,37 @@
   "name": "@braille-docs/admin",
   "private": true,
   "scripts": {
-    "build": "echo 'build not yet configured'",
-    "dev": "echo 'dev not yet configured'",
+    "build": "vite build",
+    "dev": "vite",
+    "generate:api": "node -e \"const fs=require('node:fs');const src='../../packages/shared/openapi.yaml';const tmp='./openapi.compat.yaml';const text=fs.readFileSync(src,'utf8').replace(/^openapi:\\s*3\\.2\\.0/m,'openapi: 3.1.0');fs.writeFileSync(tmp,text);\" && openapi-typescript openapi.compat.yaml -o src/api/generated/api.ts && node -e \"require('node:fs').unlinkSync('openapi.compat.yaml')\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@tiptap/core": "3.22.2",
+    "@tiptap/extension-code-block": "3.22.2",
+    "@tiptap/extension-image": "3.22.2",
+    "@tiptap/extension-link": "3.22.2",
+    "@tiptap/extension-placeholder": "3.22.2",
+    "@tiptap/extension-text-align": "3.22.2",
+    "@tiptap/extension-underline": "3.22.2",
+    "@tiptap/pm": "3.22.2",
+    "@tiptap/react": "3.22.2",
+    "@tiptap/starter-kit": "3.22.2",
     "@braille-docs/editor-schema": "workspace:*",
-    "@braille-docs/shared": "workspace:*"
+    "@braille-docs/shared": "workspace:*",
+    "better-auth": "^1.5.6",
+    "openapi-fetch": "^0.14.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router": "^7.5.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@tiptap/cli": "3.19.0",
+    "@types/react": "^18.3.17",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^5.0.2",
+    "openapi-typescript": "^7.9.1",
+    "sass-embedded": "^1.93.2",
+    "vite": "^7.1.10"
+  }
 }

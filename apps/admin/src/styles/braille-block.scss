@@ -1,0 +1,51 @@
+.braille-block {
+  border: 1px solid #c8c8be;
+  border-left: 5px solid #44665f;
+  background: linear-gradient(180deg, #f7f9f6 0%, #f0f3ef 100%);
+  border-radius: 0.6rem;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.braille-block__header {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 0.6rem;
+  align-items: end;
+  padding: 0.7rem;
+  border-bottom: 1px dashed #b8beb6;
+  background: #eef3ec;
+}
+
+.braille-block__header label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  color: #4d5951;
+}
+
+.braille-block__label {
+  align-self: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3a4d47;
+  font-weight: 700;
+}
+
+.braille-block__content {
+  display: block;
+  min-height: 84px;
+  padding: 0.8rem;
+  font-family: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+@media (max-width: 700px) {
+  .braille-block__header {
+    grid-template-columns: 1fr;
+  }
+}
