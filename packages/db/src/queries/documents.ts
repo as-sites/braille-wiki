@@ -388,3 +388,41 @@ export async function reorderSiblings(
 
   return reorderedDocuments.sort((left, right) => left.position - right.position);
 }
+
+export async function publishDocument(
+  database: DatabaseClient,
+  id: string,
+  renderedHtml: string,
+  publishedProsemirrorJson: ProsemirrorDocument,
+) {
+  const [document] = await database
+    .update(documents)
+    .set({
+      status: "published",
+      renderedHtml,
+      publishedProsemirrorJson,
+      publishedAt: sql`now()`,
+      updatedAt: sql`now()`,
+    })
+    .where(eq(documents.id, id))
+    .returning();
+
+  return document ?? null;
+}
+
+export async function unpublishDocument(
+  database: DatabaseClient,
+  id: string,
+) {
+  const [document] = await database
+    .update(documents)
+    .set({
+      status: "draft",
+      renderedHtml: null,
+      updatedAt: sql`now()`,
+    })
+    .where(eq(documents.id, id))
+    .returning();
+
+  return document ?? null;
+}
