@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@braille-docs/db": ["./packages/db/src"],
+      "@braille-docs/db/*": ["./packages/db/src/*"],
+      "@braille-docs/shared": ["./packages/shared/src"],
+      "@braille-docs/shared/*": ["./packages/shared/src/*"],
+      "@braille-docs/editor-schema": ["./packages/editor-schema/src"],
+      "@braille-docs/editor-schema/*": ["./packages/editor-schema/src/*"]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "braille-wiki",
+  "private": true,
+  "scripts": {
+    "dev": "nx run-many -t dev",
+    "build": "nx run-many -t build",
+    "typecheck": "nx run-many -t typecheck"
+  },
+  "devDependencies": {
+    "nx": "latest",
+    "typescript": "latest"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["nx"]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --version)",
+      "Bash(mise --version)",
+      "Bash(nx --version)",
+      "Bash(pnpm install:*)"
+    ]
+  }
+}

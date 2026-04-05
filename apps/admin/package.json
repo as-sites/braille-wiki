@@ -1,0 +1,14 @@
+{
+  "name": "@braille-docs/admin",
+  "private": true,
+  "scripts": {
+    "build": "echo 'build not yet configured'",
+    "dev": "echo 'dev not yet configured'",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@braille-docs/editor-schema": "workspace:*",
+    "@braille-docs/shared": "workspace:*"
+  },
+  "devDependencies": {}
+}

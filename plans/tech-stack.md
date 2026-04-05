@@ -141,6 +141,7 @@ If you find gaps (e.g. need a data table, toast notifications, dialog/modal, tab
 
 | Tool | Purpose |
 |---|---|
+| `mise` | Runtime version manager. Pins Node and pnpm versions per-project via `mise.toml`. Drop-in replacement for nvm/nodenv/asdf — reads `mise.toml` at the repo root so every contributor uses the same toolchain automatically. |
 | `pnpm` | Package manager. Native workspace support via `pnpm-workspace.yaml`. Strict dependency isolation (no phantom deps), fast installs via content-addressable store, and disk-efficient linking. |
 | `nx` | Task runner on top of pnpm workspaces. Orchestrates `build`, `dev`, `typecheck`, etc. across packages with dependency-aware parallelism and local caching. In package-based mode, Nx infers the project graph from `package.json` files automatically — no `project.json` per package, no generators or executors needed. Just an `nx.json` at the root. |
 
@@ -297,7 +298,7 @@ drizzle-zod                  @tiptap/html
 zod                          @tiptap/extension-*
 
 ── Root ────────────────────────────────────────────────────────────────────────
-pnpm (package manager) + nx (task runner) + typescript
+mise (runtime versions) + pnpm (package manager) + nx (task runner) + typescript
 ```
 
 ---
