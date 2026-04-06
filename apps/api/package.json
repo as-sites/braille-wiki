@@ -5,7 +5,6 @@
     "build": "wrangler deploy --dry-run",
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
-    "dev:node": "tsx watch src/index.ts",
     "seed": "tsx src/seed.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx,.cts,.mts"
@@ -15,7 +14,6 @@
     "@braille-docs/db": "workspace:*",
     "@braille-docs/editor-schema": "workspace:*",
     "@braille-docs/shared": "workspace:*",
-    "@hono/node-server": "^1.19.12",
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.2.4",
     "@modelcontextprotocol/sdk": "^1.29.0",

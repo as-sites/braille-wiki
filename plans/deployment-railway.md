@@ -1,142 +1,110 @@
-# Railway Deployment (Monorepo)
+# Cloudflare Deployment (Monorepo)
 
-This repo is ready to deploy to Railway using one service per app and each service pointing to its own Dockerfile.
+This repository is deployed on Cloudflare using one project/service per app:
 
-## Config as Code (Recommended)
-
-Railway supports config as code using `railway.json` or `railway.toml`.
-
-This repo now includes one config file per app:
-
-- `apps/api/railway.json`
-- `apps/web/railway.json`
-- `apps/admin/railway.json`
-
-Each file defines:
-
-- Docker builder (`DOCKERFILE`)
-- Dockerfile path for that service
-- Monorepo-aware watch patterns for the app and shared workspace packages
-
-Important Railway behavior from docs:
-
-- Config in code overrides service settings for that deployment.
-- The dashboard is not rewritten from config files.
-- Config file lookup does not follow Root Directory automatically.
-
-In each Railway service, set **Railway Config File** to an absolute repo path:
-
-- API: `/apps/api/railway.json`
-- Web: `/apps/web/railway.json`
-- Admin: `/apps/admin/railway.json`
+- API: Cloudflare Workers (`apps/api`)
+- Web: Astro on Cloudflare (`apps/web`)
+- Admin: Cloudflare Pages static site (`apps/admin`)
 
 ## Deployment Model
 
-- Create a single Railway project connected to this repository.
-- Create three services in the same project:
-  - `api` from `apps/api/Dockerfile`
-  - `web` from `apps/web/Dockerfile`
-  - `admin` from `apps/admin/Dockerfile`
-- Use Railway domains/custom domains per service instead of Traefik.
+- API and web are deployed with Wrangler from their app folders.
+- Admin is deployed to Cloudflare Pages from the monorepo root build.
+- Database is Neon Postgres and shared by API and web through `DATABASE_URL`.
+- Media storage uses Cloudflare R2 via the `MEDIA_BUCKET` binding.
 
-Traefik and `docker-compose.yml` remain useful for self-hosted/container deployments, but are not required on Railway.
+## API (Workers)
 
-## Service Configuration (Railway Monorepo)
+Working directory: `apps/api`
 
-For each Railway service, set:
+Required files:
 
-- Source repo: this monorepo
-- Root directory: `.`
-- Builder: Dockerfile
-- Railway Config File:
-  - API: `/apps/api/railway.json`
-  - Web: `/apps/web/railway.json`
-  - Admin: `/apps/admin/railway.json`
-- Dockerfile path:
-  - API: `apps/api/Dockerfile`
-  - Web: `apps/web/Dockerfile`
-  - Admin: `apps/admin/Dockerfile`
+- `wrangler.toml`
+- `src/worker.ts`
 
-Railway injects `PORT` automatically. The API and web services already honor it; admin now does too.
+Recommended commands:
 
-## Environment Variables
+- Dev: `pnpm --filter @braille-docs/api dev`
+- Deploy: `pnpm --filter @braille-docs/api deploy`
 
-Set shared secrets consistently across services where needed.
-
-### API service
-
-Required:
+Required API bindings/secrets:
 
 - `DATABASE_URL`
 - `BETTER_AUTH_SECRET`
-- `BETTER_AUTH_URL` (your API public URL)
+- `BETTER_AUTH_URL` (public API URL)
+- `ADMIN_ORIGIN` (admin public URL)
+- `INTERNAL_SECRET` (must match web)
+- `ASTRO_INTERNAL_URL` (web internal/public URL)
+- `R2_PUBLIC_URL`
+- R2 bucket binding: `MEDIA_BUCKET`
+
+Optional seed-only values:
+
 - `INITIAL_ADMIN_EMAIL`
 - `INITIAL_ADMIN_PASSWORD`
-- `INTERNAL_SECRET` (must match web service)
-- `ASTRO_INTERNAL_URL` (web service URL, internal/private URL preferred)
-- `R2_ACCOUNT_ID`
-- `R2_ACCESS_KEY_ID`
-- `R2_SECRET_ACCESS_KEY`
-- `R2_BUCKET_NAME`
-- `R2_PUBLIC_URL`
 
-Alternative (Railway Buckets or any S3-compatible provider):
+## Web (Astro on Cloudflare)
 
-- `S3_ENDPOINT`
-- `S3_REGION`
-- `S3_ACCESS_KEY_ID`
-- `S3_SECRET_ACCESS_KEY`
-- `S3_BUCKET_NAME`
-- `S3_PUBLIC_URL`
-- `S3_FORCE_PATH_STYLE`
-- `ADMIN_ORIGIN` (admin public URL)
+Working directory: `apps/web`
 
-Optional:
+Required files:
 
-- `PUBLIC_API_URL` (if needed by API-side consumers)
+- `astro.config.mjs` configured with `@astrojs/cloudflare`
+- `wrangler.toml`
 
-### Web service
+Recommended commands:
 
-Required:
+- Dev: `pnpm --filter @braille-docs/web dev`
+- Deploy: `pnpm --filter @braille-docs/web deploy`
+
+Required web bindings/secrets:
 
 - `DATABASE_URL`
-- `INTERNAL_SECRET` (must match API service)
-- `PUBLIC_API_URL` (API public URL)
+- `INTERNAL_SECRET` (must match API)
+- `PUBLIC_API_URL` (public API URL)
 
-### Admin service
+## Admin (Cloudflare Pages)
 
-Required build/runtime variable:
+Working directory: repository root.
 
-- `VITE_API_URL` (API public URL)
+Pages project settings:
 
-## Internal Cache Invalidation on Railway
+- Build command: `pnpm --filter @braille-docs/admin build`
+- Build output directory: `apps/admin/dist`
 
-Publishing from the API invalidates Astro cache tags by POSTing to the web service endpoint:
+Required environment variable:
+
+- `VITE_API_URL` (public API URL)
+
+SPA routing fallback is handled by `apps/admin/public/_redirects`.
+
+## Cache Invalidation Flow
+
+Publishing from API invalidates Astro cache tags through the web endpoint:
 
 - API caller: `apps/api/src/lib/cache.ts`
 - Web endpoint: `apps/web/src/pages/internal/cache-invalidate.ts`
 
-To make this work in Railway:
+Requirements:
 
-- Set `ASTRO_INTERNAL_URL` in API to the web service URL.
-- Set the same `INTERNAL_SECRET` in both API and web.
-- Keep web service reachable from API (internal URL preferred).
+- `INTERNAL_SECRET` must match across API and web.
+- `ASTRO_INTERNAL_URL` in API must resolve to the web service.
 
 ## First Deploy Checklist
 
-1. Provision Neon Postgres and Cloudflare R2.
-2. Add all service environment variables in Railway.
-3. Deploy all three services.
-4. Run migrations once from the API service environment:
+1. Provision Neon and set `DATABASE_URL` for API and web.
+2. Create and bind R2 bucket as `MEDIA_BUCKET` for API.
+3. Configure API and web Worker secrets/vars.
+4. Configure Admin Pages project and `VITE_API_URL`.
+5. Deploy API, web, and admin.
+6. Run migrations once:
    - `pnpm --filter @braille-docs/db db:migrate`
-5. Verify endpoints:
-   - API OpenAPI JSON: `/api/openapi.json`
-   - Admin SPA loads and authenticates
-   - Docs site loads
-6. Publish one document and confirm docs refresh without manual restart.
+7. Verify:
+   - API OpenAPI JSON at `/api/openapi.json`
+   - Admin login/edit/media upload
+   - Public docs rendering and publish cache invalidation
 
 ## Notes
 
-- In-memory cache in Astro is instance-local. If web runs multiple instances, invalidation must hit each instance or move to a shared cache strategy.
-- The current API Docker runtime executes TypeScript via Node + tsx import; this is acceptable on Railway, but you can optimize later with an explicit build artifact/runtime split.
-- Storage uses an S3-compatible client. You can keep Cloudflare R2 or switch to Railway Buckets by setting `S3_*` variables.
+- Workers isolate memory is not durable; keep stateful data in Neon/R2.
+- For local Workers parity, use Wrangler dev scripts in each app.
