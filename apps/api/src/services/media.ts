@@ -139,7 +139,10 @@ async function isMediaReferenced(mediaId: string): Promise<boolean> {
       ) AS referenced`,
     );
 
-    const row = result.rows[0] as { referenced: boolean } | undefined;
+    const rows = Array.isArray(result)
+      ? result
+      : (((result as unknown) as { rows?: Array<{ referenced: boolean }> }).rows ?? []);
+    const row = rows[0] as { referenced: boolean } | undefined;
     return row?.referenced ?? false;
   } catch {
     return false;

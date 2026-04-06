@@ -54,7 +54,10 @@ export async function resolveMcpAuth(req: Request): Promise<McpAuthResolution> {
       role: string | null;
     }>(sql`SELECT id, email, name, role FROM "user" WHERE id = ${userId} LIMIT 1`);
 
-    const user = rows.rows[0];
+    const userRows = Array.isArray(rows)
+      ? rows
+      : ((rows as { rows?: Array<{ id: string; email: string; name: string; role: string | null }> }).rows ?? []);
+    const user = userRows[0];
 
     if (!user) {
       return { status: "invalid", message: "API key user not found" };

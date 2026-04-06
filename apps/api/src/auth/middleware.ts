@@ -64,7 +64,10 @@ export const requireApiKey: MiddlewareHandler<{
     role: string;
   }>(sql`SELECT id, email, name, role FROM "user" WHERE id = ${userId} LIMIT 1`);
 
-  const user = rows.rows[0];
+  const userRows = Array.isArray(rows)
+    ? rows
+    : ((rows as { rows?: Array<{ id: string; email: string; name: string; role: string }> }).rows ?? []);
+  const user = userRows[0];
 
   if (!user) {
     return c.json({ error: "User not found" }, 401);
@@ -111,7 +114,10 @@ export const requireAuth: MiddlewareHandler<{
         role: string;
       }>(sql`SELECT id, email, name, role FROM "user" WHERE id = ${userId} LIMIT 1`);
 
-      const user = rows.rows[0];
+      const userRows = Array.isArray(rows)
+        ? rows
+        : ((rows as { rows?: Array<{ id: string; email: string; name: string; role: string }> }).rows ?? []);
+      const user = userRows[0];
 
       if (user) {
         c.set("user", { id: user.id, email: user.email, name: user.name, role: user.role ?? "editor" });

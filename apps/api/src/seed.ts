@@ -23,7 +23,11 @@ export async function seedAdmin(): Promise<void> {
       sql`SELECT id FROM "user" WHERE email = ${email} LIMIT 1`,
     );
 
-    if (rows.rows.length > 0) {
+    const existingUsers = Array.isArray(rows)
+      ? rows
+      : ((rows as { rows?: Array<{ id: string }> }).rows ?? []);
+
+    if (existingUsers.length > 0) {
       await db.execute(
         sql`UPDATE "user" SET role = 'admin' WHERE email = ${email}`,
       );
