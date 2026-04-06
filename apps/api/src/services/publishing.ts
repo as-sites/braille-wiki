@@ -8,7 +8,7 @@ import {
   updateDocument,
   type ProsemirrorDocument,
 } from "@braille-docs/db";
-import { serializeToHtmlServer } from "@braille-docs/editor-schema";
+import { serializeToHtmlServer } from "@braille-docs/editor-schema/server";
 
 import { docCacheTag, invalidateCacheTags } from "../lib/cache";
 import { BusinessLogicError, NotFoundError } from "../lib/errors";

@@ -1,5 +1,4 @@
 import { generateHTML } from "@tiptap/html";
-import { generateHTML as generateHTMLServer } from "@tiptap/html/server";
 
 import { getExtensions } from "./extensions";
 
@@ -9,7 +8,7 @@ export type ImageUrlResolver = (mediaId: string) => string;
  * Walk a ProseMirror JSON node tree and replace image `src` attributes
  * using the provided resolver. Returns a new object (deep clone).
  */
-function resolveImageUrls(node: unknown, resolver: ImageUrlResolver): unknown {
+export function resolveImageUrls(node: unknown, resolver: ImageUrlResolver): unknown {
   if (!node || typeof node !== "object") {
     return node;
   }
@@ -56,23 +55,5 @@ export function serializeToHtml(
     ? (resolveImageUrls(prosemirrorJson, options.imageUrlResolver) as object)
     : prosemirrorJson;
 
-  if (typeof window === "undefined") {
-    return generateHTMLServer(json, getExtensions());
-  }
-
   return generateHTML(json, getExtensions());
-}
-
-/**
- * Node-safe serializer for server-side publish flow.
- */
-export function serializeToHtmlServer(
-  prosemirrorJson: object,
-  options: SerializeOptions = {},
-): string {
-  const json = options.imageUrlResolver
-    ? (resolveImageUrls(prosemirrorJson, options.imageUrlResolver) as object)
-    : prosemirrorJson;
-
-  return generateHTMLServer(json, getExtensions());
 }
