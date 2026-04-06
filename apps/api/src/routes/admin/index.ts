@@ -3,6 +3,7 @@ import { registerAdminRevisionRoutes } from "./revisions";
 import { registerAdminPublishingRoutes } from "./publishing";
 import { registerAdminNavigationRoutes } from "./navigation";
 import { registerAdminUserRoutes } from "./users";
+import { registerAdminInviteRoutes } from "./invites";
 import { registerAdminMediaRoutes } from "./media";
 import { registerAdminAPIKeyRoutes } from "./api-keys";
 
@@ -15,6 +16,7 @@ export function registerAdminRoutes(app: any) {
   registerAdminPublishingRoutes(app);
   registerAdminNavigationRoutes(app);
   registerAdminUserRoutes(app);
+  registerAdminInviteRoutes(app);
   registerAdminMediaRoutes(app);
   registerAdminAPIKeyRoutes(app);
 }

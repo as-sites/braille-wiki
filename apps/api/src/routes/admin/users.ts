@@ -3,7 +3,7 @@ import type { OpenAPIHono } from "@hono/zod-openapi";
 
 import * as schemas from "../../openapi/schemas";
 import * as services from "../../services";
-import { NotFoundError, ForbiddenError, ValidationError } from "../../lib/errors";
+import { NotFoundError, ForbiddenError, ValidationError, ConflictError } from "../../lib/errors";
 
 /**
  * Admin user management routes (admin role required).
@@ -32,6 +32,9 @@ export function registerAdminUserRoutes(app: OpenAPIHono) {
       },
       403: {
         description: "Forbidden - admin role required",
+      },
+      409: {
+        description: "Conflict",
       },
     },
   });
@@ -111,6 +114,9 @@ export function registerAdminUserRoutes(app: OpenAPIHono) {
       }
       if (error instanceof ForbiddenError) {
         return c.json({ error: error.name, message: error.message }, 403);
+      }
+      if (error instanceof ConflictError) {
+        return c.json({ error: error.name, message: error.message }, 409);
       }
       throw error;
     }
@@ -199,7 +205,9 @@ export function registerAdminUserRoutes(app: OpenAPIHono) {
         description: "User deleted",
         content: {
           "application/json": {
-            schema: schemas.UserResponse,
+            schema: z.object({
+              success: z.boolean(),
+            }),
           },
         },
       },
@@ -225,8 +233,8 @@ export function registerAdminUserRoutes(app: OpenAPIHono) {
     const id = c.req.param("id");
 
     try {
-      const deleted = await services.deleteUser(id, user);
-      return c.json(deleted);
+      await services.deleteUser(id, user);
+      return c.json({ success: true });
     } catch (error) {
       if (error instanceof ForbiddenError) {
         return c.json({ error: error.name, message: error.message }, 403);

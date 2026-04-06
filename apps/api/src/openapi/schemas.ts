@@ -135,6 +135,58 @@ export const UpdateUserRequest = z.object({
 
 export const UserListResponse = z.array(UserResponse);
 
+export const UserInviteStatus = z.enum(["pending", "accepted", "revoked", "expired"]);
+
+export const UserInviteResponse = z.object({
+  id: z.string().uuid(),
+  user_id: z.string(),
+  email: z.string().email(),
+  role: UserRole,
+  status: UserInviteStatus,
+  expires_at: z.string().datetime(),
+  accepted_at: z.string().datetime().nullable(),
+  revoked_at: z.string().datetime().nullable(),
+  created_by: z.string(),
+  created_at: z.string().datetime(),
+  updated_at: z.string().datetime(),
+});
+
+export const UserInviteListResponse = z.array(UserInviteResponse);
+
+export const CreateUserInviteRequest = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  role: UserRole,
+});
+
+export const VerifyInviteRequest = z.object({
+  token: z.string().min(1),
+});
+
+export const VerifyInviteResponse = z.object({
+  valid: z.boolean(),
+  status: z.enum(["pending", "accepted", "revoked", "expired", "invalid"]),
+  email_masked: z.string().nullable(),
+  expires_at: z.string().datetime().nullable(),
+});
+
+export const AcceptInviteRequest = z.object({
+  token: z.string().min(1),
+  password: z.string().min(12),
+  name: z.string().optional(),
+});
+
+export const AcceptInviteResponse = z.object({
+  success: z.boolean(),
+  user: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string().email(),
+    role: UserRole,
+    created_at: z.string().datetime(),
+  }),
+});
+
 // ============================================================================
 // API Key Schemas
 // ============================================================================

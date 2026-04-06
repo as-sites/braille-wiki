@@ -55,6 +55,22 @@
         "/^pnpm nx run @braille-wiki/admin:lint$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^pnpm -C apps/admin run generate:api$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^pnpm -C apps/api run typecheck$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^pnpm -C apps/admin run typecheck$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^pnpm -C apps/api exec vitest run$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }

@@ -46,6 +46,27 @@ export type AdminUser = {
   createdAt: string;
 };
 
+export type AdminUserInvite = {
+  id: string;
+  userId: string;
+  email: string;
+  role: "admin" | "editor";
+  status: "pending" | "accepted" | "revoked" | "expired";
+  expiresAt: string;
+  acceptedAt: string | null;
+  revokedAt: string | null;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type InviteVerifyResult = {
+  valid: boolean;
+  status: "pending" | "accepted" | "revoked" | "expired" | "invalid";
+  emailMasked: string | null;
+  expiresAt: string | null;
+};
+
 export type AdminApiKey = {
   id: string;
   name: string;
@@ -147,6 +168,30 @@ function toApiKey(value: unknown): AdminApiKey {
     name: String(key.name ?? ""),
     createdAt: String(key.created_at ?? key.createdAt ?? ""),
     lastUsedAt: (key.last_used_at as string | null | undefined) ?? (key.lastUsedAt as string | null | undefined) ?? null,
+  };
+}
+
+function toUserInvite(value: unknown): AdminUserInvite {
+  const invite = (value ?? {}) as AnyRecord;
+
+  return {
+    id: String(invite.id ?? ""),
+    userId: String(invite.user_id ?? invite.userId ?? ""),
+    email: String(invite.email ?? ""),
+    role: (invite.role as AdminUserInvite["role"]) ?? "editor",
+    status: (invite.status as AdminUserInvite["status"]) ?? "pending",
+    expiresAt: String(invite.expires_at ?? invite.expiresAt ?? ""),
+    acceptedAt:
+      (invite.accepted_at as string | null | undefined) ??
+      (invite.acceptedAt as string | null | undefined) ??
+      null,
+    revokedAt:
+      (invite.revoked_at as string | null | undefined) ??
+      (invite.revokedAt as string | null | undefined) ??
+      null,
+    createdBy: String(invite.created_by ?? invite.createdBy ?? ""),
+    createdAt: String(invite.created_at ?? invite.createdAt ?? ""),
+    updatedAt: String(invite.updated_at ?? invite.updatedAt ?? ""),
   };
 }
 
@@ -367,6 +412,87 @@ export async function deleteUser(id: string): Promise<void> {
 export async function listApiKeys(): Promise<AdminApiKey[]> {
   const data = await unwrap(await client.GET("/api/admin/api-keys"));
   return ((data as unknown[]) ?? []).map(toApiKey);
+}
+
+export async function listUserInvites(): Promise<AdminUserInvite[]> {
+  const data = await unwrap(await client.GET("/api/admin/users/invites"));
+  return ((data as unknown[]) ?? []).map(toUserInvite);
+}
+
+export async function createUserInvite(payload: {
+  name: string;
+  email: string;
+  role: "admin" | "editor";
+}): Promise<AdminUserInvite> {
+  const data = await unwrap(
+    await client.POST("/api/admin/users/invites", {
+      body: payload as never,
+    }),
+  );
+
+  return toUserInvite(data);
+}
+
+export async function resendUserInvite(id: string): Promise<AdminUserInvite> {
+  const data = await unwrap(
+    await client.POST("/api/admin/users/invites/{id}/resend", {
+      params: { path: { id } },
+      body: {} as never,
+    }),
+  );
+
+  return toUserInvite(data);
+}
+
+export async function revokeUserInvite(id: string): Promise<AdminUserInvite> {
+  const data = await unwrap(
+    await client.POST("/api/admin/users/invites/{id}/revoke", {
+      params: { path: { id } },
+      body: {} as never,
+    }),
+  );
+
+  return toUserInvite(data);
+}
+
+export async function verifyInviteToken(token: string): Promise<InviteVerifyResult> {
+  const data = await unwrap(
+    await client.POST("/api/auth/invite/verify", {
+      body: { token } as never,
+    }),
+  );
+
+  const payload = data as AnyRecord;
+  return {
+    valid: Boolean(payload.valid),
+    status: (payload.status as InviteVerifyResult["status"]) ?? "invalid",
+    emailMasked:
+      (payload.email_masked as string | null | undefined) ??
+      (payload.emailMasked as string | null | undefined) ??
+      null,
+    expiresAt:
+      (payload.expires_at as string | null | undefined) ??
+      (payload.expiresAt as string | null | undefined) ??
+      null,
+  };
+}
+
+export async function acceptInvite(payload: {
+  token: string;
+  password: string;
+  name?: string;
+}): Promise<{ success: boolean; user: AdminUser }> {
+  const data = await unwrap(
+    await client.POST("/api/auth/invite/accept", {
+      body: payload as never,
+    }),
+  );
+
+  const value = (data ?? {}) as AnyRecord;
+  return {
+    success: Boolean(value.success),
+    user: toUser(value.user),
+  };
 }
 
 export async function createApiKey(name: string): Promise<AdminApiKeyCreated> {

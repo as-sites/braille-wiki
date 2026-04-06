@@ -13,6 +13,7 @@ import { DocumentPreviewPage } from "./pages/DocumentPreviewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MediaPage } from "./pages/MediaPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { InviteAcceptPage } from "./pages/InviteAcceptPage";
 
 export function App() {
   return (
@@ -20,6 +21,7 @@ export function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/invite/accept" element={<InviteAcceptPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminLayout />}>

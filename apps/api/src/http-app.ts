@@ -5,12 +5,12 @@ import { registerRoutes } from "./routes";
 
 const app = createApp();
 
+registerRoutes(app);
+registerMcpRoutes(app);
+
 app.on(["GET", "POST"], "/api/auth/*", (c: any) => {
   return auth.handler(c.req.raw);
 });
-
-registerRoutes(app);
-registerMcpRoutes(app);
 
 app.doc("/api/openapi.json", {
   openapi: "3.0.0",
