@@ -8,7 +8,7 @@
     "lint": "eslint . --ext .ts,.mts"
   },
   "dependencies": {
-    "@astrojs/node": "^10.0.4",
+    "@astrojs/cloudflare": "^13.1.7",
     "@astrojs/starlight": "^0.38.2",
     "@braille-docs/db": "workspace:*",
     "@braille-docs/shared": "workspace:*",

@@ -1,5 +1,5 @@
 import { defineConfig, memoryCache } from "astro/config";
-import node from "@astrojs/node";
+import cloudflare from "@astrojs/cloudflare";
 import starlight from "@astrojs/starlight";
 
 export default defineConfig({
@@ -7,9 +7,7 @@ export default defineConfig({
   server: {
     host: true,
   },
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: cloudflare(),
   integrations: [
     starlight({
       title: "Braille Documentation Platform",
