@@ -2,7 +2,6 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { HTTPException } from "hono/http-exception";
-import type { Context } from "hono";
 
 import { APIError } from "./lib/errors";
 import type { AuthVariables } from "./auth/middleware";

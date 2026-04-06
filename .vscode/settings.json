@@ -31,6 +31,10 @@
         "/^pnpm --filter @braille-docs/editor-schema test$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^pnpm nx affected -t lint --outputStyle=stream$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }

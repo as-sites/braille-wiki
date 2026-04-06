@@ -3,7 +3,7 @@ import type { OpenAPIHono } from "@hono/zod-openapi";
 
 import * as schemas from "../../openapi/schemas";
 import * as services from "../../services";
-import { UnauthorizedError, NotFoundError, ConflictError, ValidationError } from "../../lib/errors";
+import { NotFoundError, ConflictError, ValidationError } from "../../lib/errors";
 
 /**
  * Admin document CRUD routes (authentication required).

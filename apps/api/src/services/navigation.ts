@@ -20,7 +20,7 @@ export async function moveDocument(
   id: string,
   newParentPath: string | null,
   newSlug?: string,
-  userId?: string,
+  _userId?: string,
 ) {
   const document = await getDocumentById(database, id);
 

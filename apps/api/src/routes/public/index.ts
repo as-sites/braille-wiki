@@ -1,5 +1,3 @@
-import type { OpenAPIHono } from "@hono/zod-openapi";
-
 import { registerPublicDocumentRoutes } from "./documents";
 import { registerPublicSearchRoutes } from "./search";
 

@@ -4,6 +4,9 @@ import starlight from "@astrojs/starlight";
 
 export default defineConfig({
   output: "server",
+  server: {
+    host: true,
+  },
   adapter: node({
     mode: "standalone",
   }),

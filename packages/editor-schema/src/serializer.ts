@@ -56,6 +56,10 @@ export function serializeToHtml(
     ? (resolveImageUrls(prosemirrorJson, options.imageUrlResolver) as object)
     : prosemirrorJson;
 
+  if (typeof window === "undefined") {
+    return generateHTMLServer(json, getExtensions());
+  }
+
   return generateHTML(json, getExtensions());
 }
 

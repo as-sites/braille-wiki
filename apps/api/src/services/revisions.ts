@@ -8,7 +8,6 @@ import { getDocumentById } from "@braille-docs/db";
 
 import {
   NotFoundError,
-  BusinessLogicError,
 } from "../lib/errors";
 
 const database = db;

@@ -1,6 +1,3 @@
-import { auth } from "../auth";
-import type { Session } from "better-auth";
-
 import {
   NotFoundError,
   ForbiddenError,

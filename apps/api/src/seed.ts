@@ -18,12 +18,18 @@ export async function seedAdmin(): Promise<void> {
     return;
   }
 
-  let userExists = false;
   try {
     const rows = await db.execute<{ id: string }>(
       sql`SELECT id FROM "user" WHERE email = ${email} LIMIT 1`,
     );
-    userExists = rows.rows.length > 0;
+
+    if (rows.rows.length > 0) {
+      await db.execute(
+        sql`UPDATE "user" SET role = 'admin' WHERE email = ${email}`,
+      );
+      console.log(`[seed] User ${email} already exists — ensured admin role.`);
+      return;
+    }
   } catch (err: unknown) {
     const code = (err as any)?.cause?.code ?? (err as any)?.code;
     if (code === "42P01") {
@@ -33,14 +39,6 @@ export async function seedAdmin(): Promise<void> {
       return;
     }
     throw err;
-  }
-
-  if (userExists) {
-    await db.execute(
-      sql`UPDATE "user" SET role = 'admin' WHERE email = ${email}`,
-    );
-    console.log(`[seed] User ${email} already exists — ensured admin role.`);
-    return;
   }
 
   console.log(`[seed] User ${email} not found. Creating initial admin.`);

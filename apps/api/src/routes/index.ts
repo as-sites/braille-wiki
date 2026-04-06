@@ -1,5 +1,3 @@
-import type { OpenAPIHono } from "@hono/zod-openapi";
-
 import { registerPublicRoutes } from "./public";
 import { registerAdminRoutes } from "./admin";
 import { requireAuth, requireAdmin } from "../auth/middleware";

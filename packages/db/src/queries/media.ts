@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ilike, sql } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 
 import type { DatabaseClient } from "../client";

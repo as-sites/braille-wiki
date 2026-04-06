@@ -1,5 +1,3 @@
-import type { OpenAPIHono } from "@hono/zod-openapi";
-
 import { registerAdminDocumentRoutes } from "./documents";
 import { registerAdminRevisionRoutes } from "./revisions";
 import { registerAdminPublishingRoutes } from "./publishing";
