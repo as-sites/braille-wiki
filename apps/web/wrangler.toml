@@ -5,3 +5,7 @@ compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
 [assets]
 directory = "./dist/client"
 binding = "ASSETS"
+
+[[routes]]
+pattern = "wiki.braille.ay.ms/*"
+custom_domain = true

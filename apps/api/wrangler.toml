@@ -10,3 +10,7 @@ R2_PUBLIC_URL = "https://s3.braille.ay.ms"
 [[r2_buckets]]
 binding = "MEDIA_BUCKET"
 bucket_name = "braille-wiki"
+
+[[routes]]
+pattern = "api.braille.ay.ms/*"
+custom_domain = true
