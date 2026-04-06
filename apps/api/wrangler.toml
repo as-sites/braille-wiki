@@ -12,5 +12,5 @@ binding = "MEDIA_BUCKET"
 bucket_name = "braille-wiki"
 
 [[routes]]
-pattern = "api.braille.ay.ms/*"
+pattern = "api.braille.ay.ms"
 custom_domain = true

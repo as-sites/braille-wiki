@@ -7,5 +7,5 @@ directory = "./dist/client"
 binding = "ASSETS"
 
 [[routes]]
-pattern = "wiki.braille.ay.ms/*"
+pattern = "wiki.braille.ay.ms"
 custom_domain = true
