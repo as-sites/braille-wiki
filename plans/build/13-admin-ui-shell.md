@@ -122,7 +122,7 @@ apps/admin/
 ### Document Preview (`pages/DocumentPreviewPage.tsx`)
 
 - Loads the current draft's ProseMirror JSON
-- Serializes it to HTML using `serializeToHtml()` from `@braille-docs/editor-schema`
+- Serializes it to HTML using `serializeToHtml()` from `@braille-wiki/editor-schema`
 - Renders the HTML in a read-only view that matches the public site's styling
 - Shows a banner: "This is a preview of the current draft. Publish to make it live."
 - "Edit" button to go back to the editor

@@ -14,7 +14,7 @@ function getDatabaseUrl(): string {
 
   if (!databaseUrl) {
     throw new Error(
-      "DATABASE_URL is not set. Add it to your environment before using @braille-docs/db.",
+      "DATABASE_URL is not set. Add it to your environment before using @braille-wiki/db.",
     );
   }
 

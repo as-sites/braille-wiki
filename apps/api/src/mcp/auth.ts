@@ -1,4 +1,4 @@
-import { db, sql } from "@braille-docs/db";
+import { db, sql } from "@braille-wiki/db";
 
 import { auth } from "../auth";
 

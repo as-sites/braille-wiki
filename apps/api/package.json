@@ -1,5 +1,5 @@
 {
-  "name": "@braille-docs/api",
+  "name": "@braille-wiki/api",
   "private": true,
   "scripts": {
     "build": "wrangler deploy --dry-run",
@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@better-auth/api-key": "^1.5.6",
-    "@braille-docs/db": "workspace:*",
-    "@braille-docs/editor-schema": "workspace:*",
-    "@braille-docs/shared": "workspace:*",
+    "@braille-wiki/db": "workspace:*",
+    "@braille-wiki/editor-schema": "workspace:*",
+    "@braille-wiki/shared": "workspace:*",
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.2.4",
     "@modelcontextprotocol/sdk": "^1.29.0",

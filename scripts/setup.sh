@@ -48,6 +48,6 @@ echo "Installing workspace dependencies..."
 pnpm install
 
 echo "Running database migrations..."
-pnpm --filter @braille-docs/db db:migrate
+pnpm --filter @braille-wiki/db db:migrate
 
 echo "Setup complete. Review .env values before starting services."

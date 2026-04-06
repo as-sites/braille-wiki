@@ -45,7 +45,7 @@ Section 13 (Admin UI Shell) has been implemented in the admin SPA with real rout
 ## Validation
 
 - pnpm install completed successfully.
-- pnpm --filter @braille-docs/admin typecheck passed.
+- pnpm --filter @braille-wiki/admin typecheck passed.
 
 ## Important Note
 

@@ -1,4 +1,4 @@
-import { serializeToHtml } from "@braille-docs/editor-schema";
+import { serializeToHtml } from "@braille-wiki/editor-schema";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
 

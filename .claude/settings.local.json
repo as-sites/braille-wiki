@@ -5,7 +5,7 @@
       "Bash(mise --version)",
       "Bash(nx --version)",
       "Bash(pnpm install:*)",
-      "Bash(pnpm --filter @braille-docs/api typecheck)",
+      "Bash(pnpm --filter @braille-wiki/api typecheck)",
       "Bash(pnpm add:*)",
       "Bash(npx shadcn@latest add button input textarea label select card alert-dialog dialog table badge tabs separator breadcrumb tooltip skeleton scroll-area sonner sidebar sheet dropdown-menu alert --yes)",
       "Bash(pnpm remove:*)",

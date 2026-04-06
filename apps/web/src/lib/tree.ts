@@ -1,4 +1,4 @@
-import { getParentPath } from "@braille-docs/shared";
+import { getParentPath } from "@braille-wiki/shared";
 
 export interface FlatTreeNode {
   path: string;

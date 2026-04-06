@@ -50,7 +50,7 @@ Implement two shared workspace packages:
 | `@tiptap/html` | dependency | HTML serialization/deserialization |
 
 Also add workspace dependency:
-- `@braille-docs/shared: "workspace:*"` — for shared types
+- `@braille-wiki/shared: "workspace:*"` — for shared types
 
 ## Deliverables
 
@@ -183,10 +183,10 @@ This is the most critical piece. The BrailleBlock extends Tiptap's `CodeBlock` c
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/shared typecheck` passes
-2. `pnpm --filter @braille-docs/editor-schema typecheck` passes
-3. `pnpm --filter @braille-docs/shared build` produces importable output
-4. `pnpm --filter @braille-docs/editor-schema build` produces importable output
+1. `pnpm --filter @braille-wiki/shared typecheck` passes
+2. `pnpm --filter @braille-wiki/editor-schema typecheck` passes
+3. `pnpm --filter @braille-wiki/shared build` produces importable output
+4. `pnpm --filter @braille-wiki/editor-schema build` produces importable output
 5. Path utilities: unit tests for all functions with edge cases (root paths, empty strings, deeply nested paths)
 6. Editor schema: create a ProseMirror document JSON with a BrailleBlock containing multiline braille text with specific spacing → serialize to HTML → verify character-for-character fidelity
 7. Round-trip test: `serializeToHtml()` preserves all whitespace in BrailleBlock nodes (this is the #1 architectural risk)

@@ -34,10 +34,10 @@ Cause:
 ## Verification
 
 - Typecheck passed:
-  - `pnpm --filter @braille-docs/editor-schema typecheck`
-  - `pnpm --filter @braille-docs/api typecheck`
+  - `pnpm --filter @braille-wiki/editor-schema typecheck`
+  - `pnpm --filter @braille-wiki/api typecheck`
 - Publish flow tests passed:
-  - `pnpm --filter @braille-docs/api exec vitest run tests/publishing.test.ts`
+  - `pnpm --filter @braille-wiki/api exec vitest run tests/publishing.test.ts`
   - Result: 18 passed, 0 failed
 
 ## Notes

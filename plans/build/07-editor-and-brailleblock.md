@@ -48,8 +48,8 @@ In `apps/admin/package.json`:
 | `@vitejs/plugin-react` | devDependency | Vite React plugin |
 
 Also add workspace dependencies:
-- `@braille-docs/editor-schema: "workspace:*"`
-- `@braille-docs/shared: "workspace:*"`
+- `@braille-wiki/editor-schema: "workspace:*"`
+- `@braille-wiki/shared: "workspace:*"`
 
 ## Deliverables
 
@@ -88,7 +88,7 @@ apps/admin/
 
 - React plugin
 - Proxy `/api` requests to the Hono API server in development (avoid CORS issues)
-- Alias `@braille-docs/editor-schema` and `@braille-docs/shared` to workspace packages
+- Alias `@braille-wiki/editor-schema` and `@braille-wiki/shared` to workspace packages
 
 ### React Router (`src/App.tsx`)
 
@@ -132,7 +132,7 @@ These are source files placed in `src/components/` — customize them freely.
 #### Editor Component (`src/components/editor/Editor.tsx`)
 
 - Use `useEditor()` hook from `@tiptap/react`
-- Pass extensions from `@braille-docs/editor-schema` via `getExtensions()`
+- Pass extensions from `@braille-wiki/editor-schema` via `getExtensions()`
 - Add the BrailleBlock NodeView registration (see below)
 - Load initial content from the API when the page mounts
 - Provide save handler that serializes editor state to JSON and calls `PUT /api/admin/documents/:id`
@@ -168,7 +168,7 @@ Register the NodeView with Tiptap's `addNodeView()` method on the BrailleBlock e
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/admin dev` starts the Vite dev server
+1. `pnpm --filter @braille-wiki/admin dev` starts the Vite dev server
 2. Navigate to `/documents/:id/edit` with a valid document ID
 3. Editor loads and displays the document content
 4. Type text, apply formatting (bold, italic, headings, lists) — verify they work

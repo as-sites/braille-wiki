@@ -39,9 +39,9 @@ In `apps/api/package.json` (in addition to packages from plan 05):
 | `zod` | dependency | Validation schemas (peer dep) |
 
 Also add workspace dependencies:
-- `@braille-docs/db: "workspace:*"`
-- `@braille-docs/shared: "workspace:*"`
-- `@braille-docs/editor-schema: "workspace:*"`
+- `@braille-wiki/db: "workspace:*"`
+- `@braille-wiki/shared: "workspace:*"`
+- `@braille-wiki/editor-schema: "workspace:*"`
 
 ## Deliverables
 
@@ -110,7 +110,7 @@ Use `@hono/zod-openapi`'s `createRoute()` to define each endpoint with:
 
 ### Service Layer (`src/services/`)
 
-Each service function encapsulates business logic and calls `@braille-docs/db` query functions. Routes are thin — they validate input, call a service function, and return the response.
+Each service function encapsulates business logic and calls `@braille-wiki/db` query functions. Routes are thin — they validate input, call a service function, and return the response.
 
 #### `services/documents.ts`
 
@@ -178,8 +178,8 @@ Each throws a structured error that the global error handler catches and formats
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/api typecheck` passes
-2. `pnpm --filter @braille-docs/api dev` starts the server
+1. `pnpm --filter @braille-wiki/api typecheck` passes
+2. `pnpm --filter @braille-wiki/api dev` starts the server
 3. Test each endpoint category:
    - **Public:** `GET /api/documents/some-path` returns published doc or 404
    - **Admin CRUD:** Create, read, update, archive a document via authenticated requests

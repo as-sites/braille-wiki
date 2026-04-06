@@ -1,5 +1,5 @@
 import type { Context, MiddlewareHandler, Next } from "hono";
-import { sql, db } from "@braille-docs/db";
+import { sql, db } from "@braille-wiki/db";
 import { auth } from "./index";
 
 export type AuthUser = {

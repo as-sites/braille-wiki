@@ -7,8 +7,8 @@ import {
   unpublishDocument as dbUnpublishDocument,
   updateDocument,
   type ProsemirrorDocument,
-} from "@braille-docs/db";
-import { serializeToHtmlServer } from "@braille-docs/editor-schema/server";
+} from "@braille-wiki/db";
+import { serializeToHtmlServer } from "@braille-wiki/editor-schema/server";
 
 import { docCacheTag, invalidateCacheTags } from "../lib/cache";
 import { BusinessLogicError, NotFoundError } from "../lib/errors";

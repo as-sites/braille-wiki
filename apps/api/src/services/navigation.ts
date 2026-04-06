@@ -1,9 +1,9 @@
-import { db } from "@braille-docs/db";
+import { db } from "@braille-wiki/db";
 import {
   moveDocument as dbMoveDocument,
   reorderSiblings as dbReorderSiblings,
   getDocumentById,
-} from "@braille-docs/db";
+} from "@braille-wiki/db";
 
 import {
   NotFoundError,

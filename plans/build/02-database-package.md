@@ -195,9 +195,9 @@ Indexes:
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/db db:generate` produces migration files without errors
-2. `pnpm --filter @braille-docs/db db:push` applies schema to a test Neon database
-3. `pnpm --filter @braille-docs/db typecheck` passes
+1. `pnpm --filter @braille-wiki/db db:generate` produces migration files without errors
+2. `pnpm --filter @braille-wiki/db db:push` applies schema to a test Neon database
+3. `pnpm --filter @braille-wiki/db typecheck` passes
 4. Manual test: import `db` and run a simple query (e.g., `getRootWorks()`) against the test database
 5. Zod schemas export correctly and validate sample data
 

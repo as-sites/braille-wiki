@@ -3,7 +3,7 @@ import cloudflare from "@astrojs/cloudflare";
 import starlight from "@astrojs/starlight";
 
 export default defineConfig({
-  site: "https://braille-docs.pages.dev",
+  site: "https://braille-wiki.pages.dev",
   output: "server",
   server: {
     host: true,

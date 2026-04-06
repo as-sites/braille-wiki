@@ -1,7 +1,7 @@
-import { db } from "@braille-docs/db";
+import { db } from "@braille-wiki/db";
 import type {
   DocumentListFilters,
-} from "@braille-docs/db";
+} from "@braille-wiki/db";
 import {
   createDocument as dbCreateDocument,
   getDocumentById as dbGetDocumentById,
@@ -13,8 +13,8 @@ import {
   getChildren,
   getBacklinks,
   getRootWorks,
-} from "@braille-docs/db";
-import { createRevision } from "@braille-docs/db";
+} from "@braille-wiki/db";
+import { createRevision } from "@braille-wiki/db";
 
 import {
   NotFoundError,

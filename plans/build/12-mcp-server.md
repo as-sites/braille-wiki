@@ -46,7 +46,7 @@ apps/api/
 ### MCP Server Setup (`src/mcp/index.ts`)
 
 - Create an `McpServer` instance from `@modelcontextprotocol/sdk`
-- Configure server metadata: name `"braille-docs"`, version `"1.0.0"`, description
+- Configure server metadata: name `"braille-wiki"`, version `"1.0.0"`, description
 - Register all tools (public + authenticated)
 - Use `@modelcontextprotocol/hono` to mount the MCP transport as a Hono route at `POST /mcp`
 - The Hono middleware handles JSON body parsing, Host header validation, and SSE/Streamable HTTP transport

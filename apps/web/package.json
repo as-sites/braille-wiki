@@ -1,5 +1,5 @@
 {
-  "name": "@braille-docs/web",
+  "name": "@braille-wiki/web",
   "private": true,
   "scripts": {
     "build": "astro build",
@@ -11,8 +11,8 @@
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.7",
     "@astrojs/starlight": "^0.38.2",
-    "@braille-docs/db": "workspace:*",
-    "@braille-docs/shared": "workspace:*",
+    "@braille-wiki/db": "workspace:*",
+    "@braille-wiki/shared": "workspace:*",
     "astro": "^6.1.3"
   },
   "devDependencies": {

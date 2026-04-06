@@ -1,4 +1,4 @@
-import { db, listPublishedDocumentsForSearch, type ProsemirrorDocument } from "@braille-docs/db";
+import { db, listPublishedDocumentsForSearch, type ProsemirrorDocument } from "@braille-wiki/db";
 import { create, insert, remove } from "@orama/orama";
 
 import { extractSearchableText } from "./text-extractor";
@@ -89,7 +89,7 @@ export async function buildIndex(): Promise<void> {
       const code = (err as any)?.cause?.code ?? (err as any)?.code;
       if (code === "42P01") {
         console.warn(
-          "[api] Search index skipped: database tables not found. Run migrations first: pnpm --filter @braille-docs/db db:push",
+          "[api] Search index skipped: database tables not found. Run migrations first: pnpm --filter @braille-wiki/db db:push",
         );
       } else {
         throw err;

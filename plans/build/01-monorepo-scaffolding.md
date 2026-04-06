@@ -47,24 +47,24 @@ braille-wiki/
 │
 ├── apps/
 │   ├── web/
-│   │   ├── package.json          # @braille-docs/web — stub
+│   │   ├── package.json          # @braille-wiki/web — stub
 │   │   └── tsconfig.json         # Extends tsconfig.base.json
 │   ├── api/
-│   │   ├── package.json          # @braille-docs/api — stub
+│   │   ├── package.json          # @braille-wiki/api — stub
 │   │   └── tsconfig.json
 │   └── admin/
-│       ├── package.json          # @braille-docs/admin — stub
+│       ├── package.json          # @braille-wiki/admin — stub
 │       └── tsconfig.json
 │
 ├── packages/
 │   ├── db/
-│   │   ├── package.json          # @braille-docs/db — stub
+│   │   ├── package.json          # @braille-wiki/db — stub
 │   │   └── tsconfig.json
 │   ├── shared/
-│   │   ├── package.json          # @braille-docs/shared — stub
+│   │   ├── package.json          # @braille-wiki/shared — stub
 │   │   └── tsconfig.json
 │   └── editor-schema/
-│       ├── package.json          # @braille-docs/editor-schema — stub
+│       ├── package.json          # @braille-wiki/editor-schema — stub
 │       └── tsconfig.json
 ```
 
@@ -94,13 +94,13 @@ packages:
 - `"strict": true`
 - `"target": "ES2022"`, `"module": "ESNext"`, `"moduleResolution": "bundler"`
 - Path aliases for workspace packages:
-  - `@braille-docs/db` → `packages/db/src`
-  - `@braille-docs/shared` → `packages/shared/src`
-  - `@braille-docs/editor-schema` → `packages/editor-schema/src`
+  - `@braille-wiki/db` → `packages/db/src`
+  - `@braille-wiki/shared` → `packages/shared/src`
+  - `@braille-wiki/editor-schema` → `packages/editor-schema/src`
 
 ### Stub `package.json` for Each App/Package
 
-- Correct `name` field (e.g., `@braille-docs/api`)
+- Correct `name` field (e.g., `@braille-wiki/api`)
 - `"private": true`
 - Empty `dependencies` and `devDependencies` (filled by later plans)
 - `"main"` and `"types"` pointing to `src/index.ts` for packages

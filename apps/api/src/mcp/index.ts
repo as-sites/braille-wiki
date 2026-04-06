@@ -43,7 +43,7 @@ export function registerMcpRoutes(app: any) {
     }
 
     const server = new McpServer({
-      name: "braille-docs",
+      name: "braille-wiki",
       version: "1.0.0",
       description: createServerDescription(),
     });

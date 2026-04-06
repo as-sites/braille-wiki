@@ -1,4 +1,4 @@
-import type { ProsemirrorDocument } from "@braille-docs/db";
+import type { ProsemirrorDocument } from "@braille-wiki/db";
 
 type ProsemirrorNode = {
   type?: unknown;

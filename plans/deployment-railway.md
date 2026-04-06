@@ -24,8 +24,8 @@ Required files:
 
 Recommended commands:
 
-- Dev: `pnpm --filter @braille-docs/api dev`
-- Deploy: `pnpm --filter @braille-docs/api deploy`
+- Dev: `pnpm --filter @braille-wiki/api dev`
+- Deploy: `pnpm --filter @braille-wiki/api deploy`
 
 Required API bindings/secrets:
 
@@ -54,8 +54,8 @@ Required files:
 
 Recommended commands:
 
-- Dev: `pnpm --filter @braille-docs/web dev`
-- Deploy: `pnpm --filter @braille-docs/web deploy`
+- Dev: `pnpm --filter @braille-wiki/web dev`
+- Deploy: `pnpm --filter @braille-wiki/web deploy`
 
 Required web bindings/secrets:
 
@@ -69,7 +69,7 @@ Working directory: repository root.
 
 Pages project settings:
 
-- Build command: `pnpm --filter @braille-docs/admin build`
+- Build command: `pnpm --filter @braille-wiki/admin build`
 - Build output directory: `apps/admin/dist`
 
 Required environment variable:
@@ -98,7 +98,7 @@ Requirements:
 4. Configure Admin Pages project and `VITE_API_URL`.
 5. Deploy API, web, and admin.
 6. Run migrations once:
-   - `pnpm --filter @braille-docs/db db:migrate`
+   - `pnpm --filter @braille-wiki/db db:migrate`
 7. Verify:
    - API OpenAPI JSON at `/api/openapi.json`
    - Admin login/edit/media upload

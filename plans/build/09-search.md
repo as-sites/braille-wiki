@@ -129,7 +129,7 @@ In `src/index.ts` (or app startup):
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/api dev` starts the server and logs "Search index built: X documents in Y ms"
+1. `pnpm --filter @braille-wiki/api dev` starts the server and logs "Search index built: X documents in Y ms"
 2. `GET /api/search?q=braille` returns results with paths, titles, and snippets
 3. `GET /api/search?q=braille&work=nemeth` returns only results from the Nemeth work
 4. Search does NOT return results matching BrailleBlock content (e.g., searching for raw ASCII braille patterns returns no matches)

@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey } from "@better-auth/api-key";
-import { account, apikey, db, session, user, verification } from "@braille-docs/db";
+import { account, apikey, db, session, user, verification } from "@braille-wiki/db";
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,

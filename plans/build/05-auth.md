@@ -52,7 +52,7 @@ apps/api/
 
 Create and export the better-auth instance with:
 
-- **Database:** Use the Drizzle adapter with the shared `db` instance from `@braille-docs/db`
+- **Database:** Use the Drizzle adapter with the shared `db` instance from `@braille-wiki/db`
 - **User schema extension:** Add a `role` field to the user table with values `'admin' | 'editor'`, defaulting to `'editor'`
 - **Session configuration:** Cookie-based sessions. Configure `sameSite`, `secure`, `httpOnly` appropriately for the admin SPA (which may be on a different subdomain).
 - **Plugins:**
@@ -115,7 +115,7 @@ Role guards are implemented as middleware checks, not as a permissions engine.
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/api typecheck` passes
+1. `pnpm --filter @braille-wiki/api typecheck` passes
 2. Start the Hono server and verify:
    - `POST /api/auth/sign-up/email` creates a user with `role: 'editor'`
    - `POST /api/auth/sign-in/email` returns a session cookie

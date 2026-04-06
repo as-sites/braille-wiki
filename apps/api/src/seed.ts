@@ -5,7 +5,7 @@
  *
  * Requires env vars: INITIAL_ADMIN_EMAIL, INITIAL_ADMIN_PASSWORD, DATABASE_URL, BETTER_AUTH_SECRET
  */
-import { sql, db } from "@braille-docs/db";
+import { sql, db } from "@braille-wiki/db";
 import { auth } from "./auth/index";
 
 export async function seedAdmin(): Promise<void> {
@@ -37,7 +37,7 @@ export async function seedAdmin(): Promise<void> {
     const code = (err as any)?.cause?.code ?? (err as any)?.code;
     if (code === "42P01") {
       console.warn(
-        "[seed] Database tables not found — run migrations first: pnpm --filter @braille-docs/db db:migrate",
+        "[seed] Database tables not found — run migrations first: pnpm --filter @braille-wiki/db db:migrate",
       );
       return;
     }

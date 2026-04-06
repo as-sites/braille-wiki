@@ -1,13 +1,13 @@
 import sizeOf from "image-size";
 
-import { db } from "@braille-docs/db";
+import { db } from "@braille-wiki/db";
 import {
   createMedia,
   deleteMedia as dbDeleteMedia,
   getMediaById,
   listMedia as dbListMedia,
   updateMedia as dbUpdateMedia,
-} from "@braille-docs/db";
+} from "@braille-wiki/db";
 
 import { NotFoundError } from "../lib/errors";
 import { deleteObject, getPublicUrl, uploadObject } from "../lib/storage";
@@ -168,7 +168,7 @@ function getFileExtension(filename: string): string {
 
 async function isMediaReferenced(mediaId: string): Promise<boolean> {
   try {
-    const { sql } = await import("@braille-docs/db");
+    const { sql } = await import("@braille-wiki/db");
 
     const result = await database.execute(
       sql`SELECT EXISTS (

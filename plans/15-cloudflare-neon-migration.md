@@ -42,7 +42,7 @@ Easiest win — the admin app is a static Vite/React SPA with zero server-side l
 
 1. **Add `_redirects` file** in `apps/admin/public/` with `/* /index.html 200` for SPA routing.
 2. **Configure Cloudflare Pages project**
-   - Build command: `pnpm --filter @braille-docs/admin build` (from repo root)
+   - Build command: `pnpm --filter @braille-wiki/admin build` (from repo root)
    - Build output: `apps/admin/dist`
    - Environment variable: `VITE_API_URL` = the future Workers API URL
 3. **Deploy and verify** — admin login, document editing, media upload all work against existing API.
@@ -148,7 +148,7 @@ The web app uses SSR with `@astrojs/node` adapter and queries the DB directly.
    - `apps/web/astro.config.mjs` — change adapter import and config
    - `apps/web/package.json` — swap `@astrojs/node` for `@astrojs/cloudflare`
 2. **Verify middleware compatibility** — `apps/web/src/middleware.ts` uses standard Astro middleware API, should work with Cloudflare adapter.
-3. **Verify DB access** — `apps/web/src/lib/db.ts` imports from `@braille-docs/db`. After Phase 1, this uses Neon serverless which is Workers-compatible.
+3. **Verify DB access** — `apps/web/src/lib/db.ts` imports from `@braille-wiki/db`. After Phase 1, this uses Neon serverless which is Workers-compatible.
 4. **Add `wrangler.toml`** for the web app or use Cloudflare Pages with Functions.
 5. **Test Starlight integration** — Starlight with `prerender: false` and custom components needs verification on Cloudflare runtime.
 
@@ -172,7 +172,7 @@ The web app uses SSR with `@astrojs/node` adapter and queries the DB directly.
 
 ## Verification
 
-1. **Phase 1**: Run `pnpm --filter @braille-docs/db db:push` against Neon, then run `vitest` tests in `apps/api/tests/`
+1. **Phase 1**: Run `pnpm --filter @braille-wiki/db db:push` against Neon, then run `vitest` tests in `apps/api/tests/`
 2. **Phase 2**: Deploy admin to CF Pages, verify login + document editing + media upload against existing API
 3. **Phase 3**: Run `wrangler dev` locally for API, test all routes: auth, documents CRUD, media upload, search, MCP, publishing
 4. **Phase 4**: Run `wrangler dev` or `astro dev --adapter cloudflare` for web, verify document rendering + search + cache invalidation

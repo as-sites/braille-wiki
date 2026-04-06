@@ -8,8 +8,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
-      "@braille-docs/editor-schema": path.resolve(__dirname, "../../packages/editor-schema/src"),
-      "@braille-docs/shared": path.resolve(__dirname, "../../packages/shared/src"),
+      "@braille-wiki/editor-schema": path.resolve(__dirname, "../../packages/editor-schema/src"),
+      "@braille-wiki/shared": path.resolve(__dirname, "../../packages/shared/src"),
     },
   },
   server: {

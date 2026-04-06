@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { serializeToHtml } from "@braille-docs/editor-schema";
+import { serializeToHtml } from "@braille-wiki/editor-schema";
 
 describe("Braille fidelity — character-level whitespace preservation", () => {
   /**

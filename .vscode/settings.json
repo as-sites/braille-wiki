@@ -1,18 +1,18 @@
 {
     "chat.tools.terminal.autoApprove": {
-        "/^cd p:/braille-wiki ; pnpm --filter @braille-docs/api add -D tsx @types/node dotenv$/": {
+        "/^cd p:/braille-wiki ; pnpm --filter @braille-wiki/api add -D tsx @types/node dotenv$/": {
             "approve": true,
             "matchCommandLine": true
         },
-        "/^cd p:/braille-wiki ; pnpm --filter @braille-docs/api typecheck 2>&1$/": {
+        "/^cd p:/braille-wiki ; pnpm --filter @braille-wiki/api typecheck 2>&1$/": {
             "approve": true,
             "matchCommandLine": true
         },
-        "/^pnpm --filter @braille-docs/api typecheck$/": {
+        "/^pnpm --filter @braille-wiki/api typecheck$/": {
             "approve": true,
             "matchCommandLine": true
         },
-        "/^pnpm --filter @braille-docs/api typecheck 2>&1 \\| head -100$/": {
+        "/^pnpm --filter @braille-wiki/api typecheck 2>&1 \\| head -100$/": {
             "approve": true,
             "matchCommandLine": true
         },
@@ -28,7 +28,7 @@
             "approve": true,
             "matchCommandLine": true
         },
-        "/^pnpm --filter @braille-docs/editor-schema test$/": {
+        "/^pnpm --filter @braille-wiki/editor-schema test$/": {
             "approve": true,
             "matchCommandLine": true
         },
@@ -36,7 +36,7 @@
             "approve": true,
             "matchCommandLine": true
         },
-        "/^pnpm --filter @braille-docs/admin build$/": {
+        "/^pnpm --filter @braille-wiki/admin build$/": {
             "approve": true,
             "matchCommandLine": true
         },
@@ -44,11 +44,11 @@
             "approve": true,
             "matchCommandLine": true
         },
-        "/^pnpm --filter @braille-docs/db typecheck$/": {
+        "/^pnpm --filter @braille-wiki/db typecheck$/": {
             "approve": true,
             "matchCommandLine": true
         },
-        "/^pnpm install --filter @braille-docs/api$/": {
+        "/^pnpm install --filter @braille-wiki/api$/": {
             "approve": true,
             "matchCommandLine": true
         }

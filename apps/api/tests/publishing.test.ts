@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// --- mock @braille-docs/db ---
-vi.mock("@braille-docs/db", () => {
+// --- mock @braille-wiki/db ---
+vi.mock("@braille-wiki/db", () => {
   return {
     db: {},
     getDocumentById: vi.fn(),
@@ -25,7 +25,7 @@ vi.mock("../src/lib/cache", () => ({
   docCacheTag: (path: string) => `doc:${path}`,
 }));
 
-import * as dbModule from "@braille-docs/db";
+import * as dbModule from "@braille-wiki/db";
 import * as searchService from "../src/services/search";
 import * as cacheModule from "../src/lib/cache";
 import {

@@ -31,8 +31,8 @@ In `apps/web/package.json`:
 | `@astrojs/node` | dependency | Node.js SSR adapter |
 
 Also add workspace dependencies:
-- `@braille-docs/db: "workspace:*"`
-- `@braille-docs/shared: "workspace:*"`
+- `@braille-wiki/db: "workspace:*"`
+- `@braille-wiki/shared: "workspace:*"`
 
 ## Deliverables
 
@@ -55,7 +55,7 @@ apps/web/
 │   ├── layouts/
 │   │   └── DocLayout.astro       # Page layout extending Starlight's layout
 │   ├── lib/
-│   │   ├── db.ts                 # Database queries for SSR (imports from @braille-docs/db)
+│   │   ├── db.ts                 # Database queries for SSR (imports from @braille-wiki/db)
 │   │   └── tree.ts               # Build nested tree structure from flat DB results
 │   └── styles/
 │       └── braille-block.css     # BrailleBlock public rendering styles
@@ -77,7 +77,7 @@ apps/web/
 
 ### Landing Page (`src/pages/index.astro`)
 
-- Query `getRootWorks()` from `@braille-docs/db` to get all published root-level documents
+- Query `getRootWorks()` from `@braille-wiki/db` to get all published root-level documents
 - Render a card/list for each work showing title, description
 - Each card links to `/<path>` (e.g., `/nemeth`)
 - Cache tag: `doc:index`
@@ -192,7 +192,7 @@ Screen reader accessibility is a **top priority** for the public site:
 
 ### Database Queries (`src/lib/db.ts`)
 
-Import and re-export the relevant query functions from `@braille-docs/db`:
+Import and re-export the relevant query functions from `@braille-wiki/db`:
 - `getPublishedDocument(path)`
 - `getSidebarTree(rootPath)`
 - `getBreadcrumbs(path)`
@@ -203,7 +203,7 @@ These queries run during SSR. The Astro app connects to Postgres directly — it
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/web dev` starts the Astro dev server
+1. `pnpm --filter @braille-wiki/web dev` starts the Astro dev server
 2. Navigate to `/` — landing page shows published root-level works
 3. Navigate to a document path (e.g., `/nemeth/chapter-1`) — page renders with sidebar, breadcrumbs, and content
 4. BrailleBlock content renders in monospace with exact whitespace preservation

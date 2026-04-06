@@ -163,7 +163,7 @@ networks:
 services:
   api:
     build: !reset null
-    command: pnpm --filter @braille-docs/api dev
+    command: pnpm --filter @braille-wiki/api dev
     volumes:
       - .:/app
       - /app/node_modules
@@ -172,7 +172,7 @@ services:
 
   web:
     build: !reset null
-    command: pnpm --filter @braille-docs/web dev
+    command: pnpm --filter @braille-wiki/web dev
     volumes:
       - .:/app
       - /app/node_modules
@@ -181,7 +181,7 @@ services:
 
   admin:
     build: !reset null
-    command: pnpm --filter @braille-docs/admin dev
+    command: pnpm --filter @braille-wiki/admin dev
     volumes:
       - .:/app
       - /app/node_modules

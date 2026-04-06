@@ -1,10 +1,10 @@
-import { db } from "@braille-docs/db";
+import { db } from "@braille-wiki/db";
 import {
   getRevisions as dbGetRevisions,
   getRevisionById as dbGetRevisionById,
   createRevision,
-} from "@braille-docs/db";
-import { getDocumentById } from "@braille-docs/db";
+} from "@braille-wiki/db";
+import { getDocumentById } from "@braille-wiki/db";
 
 import {
   NotFoundError,
@@ -66,7 +66,7 @@ export async function rollbackDocument(
   }
 
   // Update the document with the revision's prosemirrorJson
-  const { updateDocument } = await import("@braille-docs/db");
+  const { updateDocument } = await import("@braille-wiki/db");
   const updated = await updateDocument(database, documentId, {
     prosemirrorJson: sourceRevision.prosemirrorJson,
     updatedBy: userId,

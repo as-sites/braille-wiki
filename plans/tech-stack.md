@@ -26,7 +26,7 @@ These live in internal workspace packages (see Monorepo Structure below) and are
 | `@astrojs/starlight` | Documentation theme built on Astro. Provides the sidebar, navigation, breadcrumbs, search UI shell, and accessible page layout out of the box. |
 | `@astrojs/node` | Astro adapter for running SSR on Node.js in a Docker container. |
 
-Astro queries Postgres directly for page rendering by importing from the shared `@braille-docs/db` package — it does not call the Hono API for SSR. The only client-side JS on the public site is the search modal, which calls the Hono API's search endpoint.
+Astro queries Postgres directly for page rendering by importing from the shared `@braille-wiki/db` package — it does not call the Hono API for SSR. The only client-side JS on the public site is the search modal, which calls the Hono API's search endpoint.
 
 ---
 
@@ -62,7 +62,7 @@ Astro queries Postgres directly for page rendering by importing from the shared 
 
 ### ProseMirror Serialization
 
-At publish time, the Hono service serializes ProseMirror JSON → HTML. Rather than owning these dependencies directly, it imports from the shared `@braille-docs/editor-schema` package (see Monorepo Structure below), which ensures the server-side serializer and the client-side editor use the exact same Tiptap schema and extension definitions.
+At publish time, the Hono service serializes ProseMirror JSON → HTML. Rather than owning these dependencies directly, it imports from the shared `@braille-wiki/editor-schema` package (see Monorepo Structure below), which ensures the server-side serializer and the client-side editor use the exact same Tiptap schema and extension definitions.
 
 ### Media Storage
 
@@ -86,7 +86,7 @@ At publish time, the Hono service serializes ProseMirror JSON → HTML. Rather t
 
 ### Editor
 
-The editor uses **Tiptap's Simple Editor template** (`npx @tiptap/cli@latest init simple-editor`), which scaffolds a working editor with toolbar components, node components, and primitives — all MIT-licensed and customizable. The Tiptap schema and extension configuration (including the custom BrailleBlock node) are defined in the shared `@braille-docs/editor-schema` package so the admin editor and the server-side serializer stay in sync.
+The editor uses **Tiptap's Simple Editor template** (`npx @tiptap/cli@latest init simple-editor`), which scaffolds a working editor with toolbar components, node components, and primitives — all MIT-licensed and customizable. The Tiptap schema and extension configuration (including the custom BrailleBlock node) are defined in the shared `@braille-wiki/editor-schema` package so the admin editor and the server-side serializer stay in sync.
 
 | Package | Purpose |
 |---|---|
@@ -150,7 +150,7 @@ Nx is used in **package-based** mode (as opposed to "integrated" mode), which me
 ### Directory Layout
 
 ```
-braille-docs/
+braille-wiki/
 ├── apps/
 │   ├── web/                  # Public docs site — Astro + Starlight
 │   ├── api/                  # Backend API + MCP server — Hono
@@ -170,7 +170,7 @@ braille-docs/
 
 ### Internal Packages
 
-These are workspace packages (never published to npm) that multiple apps import. Each has its own `package.json` with a `name` like `@braille-docs/db` and is referenced by apps via pnpm workspace protocol (`"@braille-docs/db": "workspace:*"`).
+These are workspace packages (never published to npm) that multiple apps import. Each has its own `package.json` with a `name` like `@braille-wiki/db` and is referenced by apps via pnpm workspace protocol (`"@braille-wiki/db": "workspace:*"`).
 
 #### `packages/db`
 
@@ -204,9 +204,9 @@ Each app's `package.json` lists internal packages as dependencies using the work
 // apps/api/package.json
 {
   "dependencies": {
-    "@braille-docs/db": "workspace:*",
-    "@braille-docs/editor-schema": "workspace:*",
-    "@braille-docs/shared": "workspace:*",
+    "@braille-wiki/db": "workspace:*",
+    "@braille-wiki/editor-schema": "workspace:*",
+    "@braille-wiki/shared": "workspace:*",
     "hono": "...",
     // ...
   }
@@ -217,8 +217,8 @@ Each app's `package.json` lists internal packages as dependencies using the work
 // apps/web/package.json
 {
   "dependencies": {
-    "@braille-docs/db": "workspace:*",
-    "@braille-docs/shared": "workspace:*",
+    "@braille-wiki/db": "workspace:*",
+    "@braille-wiki/shared": "workspace:*",
     "astro": "...",
     // ...
   }
@@ -229,8 +229,8 @@ Each app's `package.json` lists internal packages as dependencies using the work
 // apps/admin/package.json
 {
   "dependencies": {
-    "@braille-docs/editor-schema": "workspace:*",
-    "@braille-docs/shared": "workspace:*",
+    "@braille-wiki/editor-schema": "workspace:*",
+    "@braille-wiki/shared": "workspace:*",
     "react": "...",
     "hono": "...",
     // ...
@@ -238,7 +238,7 @@ Each app's `package.json` lists internal packages as dependencies using the work
 }
 ```
 
-Note that `apps/admin` does not depend on `@braille-docs/db` — the admin SPA never talks to Postgres directly. It goes through the Hono API.
+Note that `apps/admin` does not depend on `@braille-wiki/db` — the admin SPA never talks to Postgres directly. It goes through the Hono API.
 
 ### Nx Configuration
 

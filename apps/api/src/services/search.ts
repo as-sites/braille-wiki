@@ -1,4 +1,4 @@
-import type { ProsemirrorDocument } from "@braille-docs/db";
+import type { ProsemirrorDocument } from "@braille-wiki/db";
 import { search } from "@orama/orama";
 
 import { ValidationError } from "../lib/errors";

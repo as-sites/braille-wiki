@@ -5,7 +5,7 @@ import {
   getPublishedDocument as queryPublishedDocument,
   getRootWorks as queryRootWorks,
   getSidebarTree as querySidebarTree,
-} from "@braille-docs/db";
+} from "@braille-wiki/db";
 
 export async function getPublishedDocument(path: string) {
   return queryPublishedDocument(db, path);

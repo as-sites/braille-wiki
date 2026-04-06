@@ -4,7 +4,7 @@ import type {
   documentLinks,
   documentRevisions,
   documents,
-} from "@braille-docs/db/dist/schema";
+} from "@braille-wiki/db/dist/schema";
 
 export type Document = InferSelectModel<typeof documents>;
 export type DocumentRevision = InferSelectModel<typeof documentRevisions>;

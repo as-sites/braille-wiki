@@ -1,7 +1,7 @@
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 
-import { brailleTypeValues } from "@braille-docs/editor-schema";
+import { brailleTypeValues } from "@braille-wiki/editor-schema";
 
 export function BrailleBlockView(props: NodeViewProps) {
   const brailleType = String(props.node.attrs.brailleType ?? "UEB Grade 2");

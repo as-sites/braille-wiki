@@ -22,7 +22,7 @@ Use the official Tiptap CLI simple editor UI as the starting point, then keep Br
    - `pnpm dlx @tiptap/cli init simple-editor`
 2. Review generated component locations and naming.
 3. Move or map generated components into the existing admin structure under src/components/editor.
-4. Keep current extension setup from @braille-docs/editor-schema.
+4. Keep current extension setup from @braille-wiki/editor-schema.
 5. Ensure BrailleBlock insertion still exists as a first-class action in the toolbar.
 6. Keep or restore any app-specific commands needed for headings, lists, links, and formatting.
 7. Remove obsolete custom toolbar code if fully replaced.
@@ -32,7 +32,7 @@ Use the official Tiptap CLI simple editor UI as the starting point, then keep Br
 1. Toolbar UI comes from Tiptap simple editor scaffolded components.
 2. Existing editor commands still work.
 3. BrailleBlock can be inserted from the toolbar.
-4. No typecheck errors in @braille-docs/admin.
+4. No typecheck errors in @braille-wiki/admin.
 
 ## Task 2: Add In-App Navigation Blocking
 
@@ -89,8 +89,8 @@ Show actionable error messages from API responses rather than a generic failure 
 
 ## Verification Checklist
 
-1. `pnpm --filter @braille-docs/admin typecheck`
-2. `pnpm --filter @braille-docs/admin dev`
+1. `pnpm --filter @braille-wiki/admin typecheck`
+2. `pnpm --filter @braille-wiki/admin dev`
 3. Open `/documents/:id/edit` with a real document id.
 4. Confirm toolbar commands and BrailleBlock insertion work.
 5. Make edits, attempt route navigation, verify guard prompt.

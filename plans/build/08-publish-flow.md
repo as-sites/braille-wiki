@@ -23,7 +23,7 @@ Implement the complete publish/unpublish/discard workflow in the Hono API. This 
 
 ## Packages to Install
 
-No new packages — uses `@braille-docs/editor-schema` (already a workspace dep of `apps/api`) and Orama (installed in plan 09).
+No new packages — uses `@braille-wiki/editor-schema` (already a workspace dep of `apps/api`) and Orama (installed in plan 09).
 
 Testing packages (devDependencies in `apps/api`):
 
@@ -56,7 +56,7 @@ Fill in the stub created in plan 06 with three functions:
 Full orchestration pipeline:
 
 1. **Load** the document by ID. Fail if not found.
-2. **Serialize** `prosemirror_json` to HTML using `serializeToHtml()` from `@braille-docs/editor-schema`.
+2. **Serialize** `prosemirror_json` to HTML using `serializeToHtml()` from `@braille-wiki/editor-schema`.
 3. **Store** results in the database:
    - Set `rendered_html` to the serialized HTML
    - Set `published_prosemirror_json` to a snapshot of the current `prosemirror_json`
@@ -156,7 +156,7 @@ Integration tests for the publish flow:
 
 ## Verification
 
-1. `pnpm --filter @braille-docs/api test` — all tests pass
+1. `pnpm --filter @braille-wiki/api test` — all tests pass
 2. BrailleBlock fidelity tests pass with various whitespace patterns
 3. Manual test: create a document with braille content in the admin editor, publish it, query `rendered_html` from the database, verify character-for-character fidelity
 4. Publish flow creates correct `document_links` rows

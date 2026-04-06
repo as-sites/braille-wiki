@@ -1,5 +1,5 @@
 {
-  "name": "@braille-docs/editor-schema",
+  "name": "@braille-wiki/editor-schema",
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -15,7 +15,7 @@
     "test": "tsx --test src/**/*.test.ts"
   },
   "dependencies": {
-    "@braille-docs/shared": "workspace:*",
+    "@braille-wiki/shared": "workspace:*",
     "@tiptap/core": "3.22.2",
     "@tiptap/extension-code-block": "3.22.2",
     "@tiptap/extension-image": "3.22.2",

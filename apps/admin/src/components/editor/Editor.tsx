@@ -3,7 +3,7 @@ import { EditorContent, EditorContext, ReactNodeViewRenderer, useEditor } from "
 import type { JSONContent } from "@tiptap/react";
 
 // --- Custom Extensions ---
-import { BrailleBlock, getExtensions } from "@braille-docs/editor-schema";
+import { BrailleBlock, getExtensions } from "@braille-wiki/editor-schema";
 import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";

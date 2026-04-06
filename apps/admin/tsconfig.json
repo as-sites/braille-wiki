@@ -8,12 +8,12 @@
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"],
-      "@braille-docs/db": ["./packages/db/src"],
-      "@braille-docs/db/*": ["./packages/db/src/*"],
-      "@braille-docs/shared": ["./packages/shared/src"],
-      "@braille-docs/shared/*": ["./packages/shared/src/*"],
-      "@braille-docs/editor-schema": ["./packages/editor-schema/src"],
-      "@braille-docs/editor-schema/*": ["./packages/editor-schema/src/*"]
+      "@braille-wiki/db": ["./packages/db/src"],
+      "@braille-wiki/db/*": ["./packages/db/src/*"],
+      "@braille-wiki/shared": ["./packages/shared/src"],
+      "@braille-wiki/shared/*": ["./packages/shared/src/*"],
+      "@braille-wiki/editor-schema": ["./packages/editor-schema/src"],
+      "@braille-wiki/editor-schema/*": ["./packages/editor-schema/src/*"]
     }
   },
   "include": ["src", "vite.config.ts"]
