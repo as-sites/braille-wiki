@@ -29,6 +29,9 @@ importers:
       typescript-eslint:
         specifier: ^8.46.1
         version: 8.58.0(eslint@10.2.0)(typescript@6.0.2)
+      wrangler:
+        specifier: 4.80.0
+        version: 4.80.0
 
   apps/admin:
     dependencies:
