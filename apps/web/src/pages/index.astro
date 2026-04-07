@@ -12,6 +12,8 @@ Astro.cache.set({
 });
 
 const works = await getRootWorks();
+const primaryWork = works[0];
+const docsHref = primaryWork ? `/${primaryWork.path}` : "/";
 ---
 
 <StarlightPage
@@ -34,6 +36,12 @@ const works = await getRootWorks();
       Browse codebooks, manuals, and standards with a screen-reader-friendly
       layout and exact braille block spacing preserved.
     </p>
+    <div class="landing-hero__actions">
+      <a href={docsHref} class="landing-cta">Go to docs</a>
+      <span class="landing-hero__meta">
+        {works.length} published work{works.length === 1 ? "" : "s"}
+      </span>
+    </div>
   </section>
 
   <section class="landing-section">

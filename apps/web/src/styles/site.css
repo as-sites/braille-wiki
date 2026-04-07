@@ -23,18 +23,18 @@
     --sl-color-text: #1f1d19;
     --sl-color-text-accent: #123730;
     --sl-color-text-invert: #fffdfa;
-    --sl-color-bg: #fffdfa;
-    --sl-color-bg-nav: rgba(255, 251, 243, 0.92);
-    --sl-color-bg-sidebar: rgba(248, 242, 231, 0.96);
+    --sl-color-bg: #f8fafc;
+    --sl-color-bg-nav: rgba(248, 250, 252, 0.9);
+    --sl-color-bg-sidebar: rgba(241, 245, 249, 0.95);
     --sl-color-bg-inline-code: #ece3d4;
     --sl-color-bg-accent: #245c52;
-    --sl-color-hairline-light: #e5dccb;
-    --sl-color-hairline: #f0e8da;
-    --sl-color-hairline-shade: #e5dccb;
+    --sl-color-hairline-light: #e2e8f0;
+    --sl-color-hairline: #e5ebf3;
+    --sl-color-hairline-shade: #dce4ee;
     --sl-color-backdrop-overlay: rgba(33, 31, 26, 0.35);
-    --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 239, 227, 0.92)), #fffdfa;
-    --card-text: #1f1d19;
-    --card-text-muted: #5a5243;
+    --card-bg: #ffffff;
+    --card-text: #0f172a;
+    --card-text-muted: #475569;
   }
 
   :root[data-theme="dark"] {
@@ -47,38 +47,38 @@
     --sl-color-gray-6: #2a2520;
     --sl-color-gray-7: #1e1a16;
     --sl-color-black: #161310;
-    --sl-color-text: #e8e0d0;
+    --sl-color-text: #e5e7eb;
     --sl-color-text-accent: #7dceba;
     --sl-color-text-invert: #1f1d19;
-    --sl-color-bg: #161310;
-    --sl-color-bg-nav: rgba(22, 19, 16, 0.92);
-    --sl-color-bg-sidebar: rgba(26, 22, 18, 0.96);
+    --sl-color-bg: #0b1220;
+    --sl-color-bg-nav: rgba(11, 18, 32, 0.88);
+    --sl-color-bg-sidebar: rgba(15, 23, 42, 0.92);
     --sl-color-bg-inline-code: #2e2920;
     --sl-color-bg-accent: #1d4f46;
-    --sl-color-hairline-light: #2e2920;
-    --sl-color-hairline: #261f19;
-    --sl-color-hairline-shade: #2e2920;
+    --sl-color-hairline-light: #1f2937;
+    --sl-color-hairline: #182231;
+    --sl-color-hairline-shade: #1f2937;
     --sl-color-backdrop-overlay: rgba(0, 0, 0, 0.6);
     --sl-color-accent-low: #1d4f46;
     --sl-color-accent: #4aab97;
     --sl-color-accent-high: #7dceba;
-    --card-bg: linear-gradient(135deg, rgba(38, 32, 26, 0.96), rgba(30, 26, 20, 0.92)), #1e1a16;
-    --card-text: #e8e0d0;
-    --card-text-muted: #a89d8c;
+    --card-bg: #111827;
+    --card-text: #e5e7eb;
+    --card-text-muted: #9ca3af;
   }
 
   html {
     background:
-      radial-gradient(circle at top left, rgba(247, 222, 171, 0.45), transparent 30%),
-      radial-gradient(circle at top right, rgba(175, 212, 201, 0.2), transparent 28%),
-      linear-gradient(180deg, #fffdfa 0%, #f5efe4 100%);
+      radial-gradient(circle at top left, rgba(148, 163, 184, 0.22), transparent 32%),
+      radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 28%),
+      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   }
 
   [data-theme="dark"] {
     background:
-      radial-gradient(circle at top left, rgba(36, 92, 82, 0.12), transparent 30%),
-      radial-gradient(circle at top right, rgba(74, 171, 151, 0.06), transparent 28%),
-      linear-gradient(180deg, #161310 0%, #1a1610 100%);
+      radial-gradient(circle at top left, rgba(30, 64, 175, 0.18), transparent 30%),
+      radial-gradient(circle at top right, rgba(8, 145, 178, 0.1), transparent 28%),
+      linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
   }
 
   body {
@@ -93,8 +93,8 @@
   .work-card,
   .doc-not-found,
   .doc-lede {
-    border: 1px solid rgba(138, 116, 74, 0.2);
-    box-shadow: 0 14px 34px rgba(77, 62, 39, 0.08);
+    border: 1px solid color-mix(in srgb, var(--sl-color-hairline-light) 78%, transparent);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
   }
 
   .landing-hero {
@@ -104,12 +104,6 @@
     padding: 1.6rem;
     border-radius: 1.4rem;
     background: var(--card-bg);
-  }
-
-  html:not([data-theme="dark"]) .landing-hero {
-    background:
-      radial-gradient(circle at top left, rgba(247, 222, 171, 0.5), transparent 35%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 242, 231, 0.92));
   }
 
   .landing-hero__eyebrow {
@@ -132,6 +126,39 @@
   .doc-not-found,
   .doc-lede {
     color: var(--card-text-muted);
+  }
+
+  .landing-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .landing-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.6rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 78%, #000 22%);
+    background: var(--sl-color-accent);
+    color: var(--sl-color-text-invert);
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 120ms ease, filter 120ms ease;
+  }
+
+  .landing-cta:hover,
+  .landing-cta:focus-visible {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+
+  .landing-hero__meta {
+    color: var(--card-text-muted);
+    font-size: var(--sl-text-sm);
   }
 
   .landing-section {
@@ -170,7 +197,7 @@
   .work-card:hover,
   .work-card:focus-visible {
     transform: translateY(-2px);
-    border-color: rgba(36, 92, 82, 0.36);
+    border-color: color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
   }
 
   .work-card__path {
