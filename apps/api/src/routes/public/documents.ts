@@ -55,7 +55,7 @@ export function registerPublicDocumentRoutes(app: any) {
         renderedHtml: document.renderedHtml || "",
         publishedAt: document.publishedAt?.toISOString() || new Date().toISOString(),
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundError) {
         return c.json(
           { error: error.name, message: error.message },
@@ -101,7 +101,7 @@ export function registerPublicDocumentRoutes(app: any) {
     const children = await services.getChildrenForPath(parentPath);
 
     return c.json(
-      children.map((child: any) => ({
+      children.map((child) => ({
         path: child.path,
         title: child.title,
         description: child.description,
@@ -143,7 +143,7 @@ export function registerPublicDocumentRoutes(app: any) {
       const path = c.req.param("path");
       const tree = await services.getTree(path);
       return c.json(tree[0] || {});
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundError) {
         return c.json(
           { error: error.name, message: error.message },
@@ -184,7 +184,7 @@ export function registerPublicDocumentRoutes(app: any) {
     const backlinks = await services.getBacklinksForDocument(path);
 
     return c.json(
-      backlinks.map((link: any) => ({
+      backlinks.map((link) => ({
         path: link.path,
         title: link.title,
       })),

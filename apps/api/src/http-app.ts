@@ -8,7 +8,7 @@ const app = createApp();
 registerRoutes(app);
 registerMcpRoutes(app);
 
-app.on(["GET", "POST"], "/api/auth/*", (c: any) => {
+app.on(["GET", "POST"], "/api/auth/*", (c) => {
   return auth.handler(c.req.raw);
 });
 

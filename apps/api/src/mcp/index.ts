@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 
+import type { AppType } from "../app";
 import { resolveMcpAuth } from "./auth";
 import { registerAuthenticatedTools } from "./tools/authenticated";
 import { registerPublicTools } from "./tools/public";
@@ -27,8 +28,8 @@ function jsonRpcError(id: unknown, code: number, message: string): Response {
   );
 }
 
-export function registerMcpRoutes(app: any) {
-  app.all("/mcp", async (c: any) => {
+export function registerMcpRoutes(app: AppType) {
+  app.all("/mcp", async (c) => {
     let parsedBody: { id?: unknown } | undefined;
     try {
       parsedBody = (await c.req.raw.clone().json()) as { id?: unknown };
